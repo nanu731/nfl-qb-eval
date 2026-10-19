@@ -9,6 +9,7 @@ Current code audits inputs, compares supplied nflfastR completion percentage ove
 - `audit_inputs.R`: downloads and audits official 2023 PBP/FTN inputs and a schedule reference; preserves originals and provenance receipts.
 - `pilot_accuracy.R`: uses existing exact snapshots for the 2023 same-throw interleaved/chronological split comparison and count-only FTN diagnostics.
 - `export_comparison.R`: exports only the frozen annual comparison and baseline aggregates with a separate payload-digest manifest.
+- `rush_contribution.R`: describes recorded scramble/non-scramble-run contribution per combined opportunity, with four frozen association endpoints and marginal actor-season sensitivity intervals.
 - `sack_repeatability.R`: uses exact 2023/2024 PBP/schedule and opportunity manifests for fixed-cohort recorded sack-avoidance associations; no FTN or pressure denominator.
 - `annual_stability.R`: uses existing exact PBP/schedule snapshots for the paired 2023–2024 annual comparison. Each year is a fixed stratum; leave-game deviations are centered on the full estimate, not the deletion mean. FTN is unnecessary for this script.
 
@@ -18,8 +19,8 @@ The scripts use installed R packages; they do not install dependencies. Tested w
 |---|---|---|
 | dplyr | 1.2.1 | All scripts; requires the modern join `relationship` argument |
 | readr | 2.2.0 | All scripts |
-| arrow | 25.0.0 | Audit, pilot, annual comparison, baseline, sack study and comparison export; reading Parquet |
-| digest | 0.6.39 | Audit, pilot, annual comparison, baseline, sack study and comparison export; SHA256 verification |
+| arrow | 25.0.0 | Audit, pilot, annual comparison, baseline, sack/run studies and comparison export; reading Parquet |
+| digest | 0.6.39 | Audit, pilot, annual comparison, baseline, sack/run studies and comparison export; SHA256 verification |
 | stringr | 1.6.0 | Audit, pilot and annual comparison; frozen receiver-description rule |
 | tidyr | 1.3.2 | Pilot and annual comparison |
 | curl | 7.1.0 | Input audit downloads |
@@ -111,6 +112,27 @@ Rscript sack_repeatability.R "INPUT_2023" "INPUT_2024" "COHORT_CSV" "E_KEYS_CSV"
 The script verifies source hashes and accepted E/D keys, independently reconstructs membership and split maps, and saves counts, keys, maps, contributing games and a design/script-hashed run manifest before rates. Timestamped outputs include actor-half/year counts and rates, all whole-NFL-game deletions, paired-actor influence checks, unavailable statuses, and complement/known-mean arithmetic checks. Zero-sack records remain; missing diagnostic flags remain explicit.
 
 Approximate 95% conditional working-model sensitivity intervals use Fisher-transformed correlations and delete complete NFL games across both teams, all selected actors and both half labels. Each season's replicates are centered on **their own mean**, then its finite-game variance contribution is summed. This prospectively specified annual centering differs from `annual_stability.R`; earlier CPOE outputs are unchanged. Undefined/boundary correlations or zero/nonfinite variance withhold the affected interval without dropping replicates or changing cohorts. These sensitivities do not establish NFL coverage, absolute agreement, player separation, pressure handling, isolated skill, prediction or overall decision quality; persistent surroundings, serial dependence, selection and rare sacks remain limitations.
+
+## Recorded run contribution
+
+`rush_contribution.R` keeps the same fixed 20-ID cohort and distinguishes **S**, recorded scramble-runs within accepted dropbacks D, from **R**, recorded non-scramble actor runs outside D. R includes aborted and lateral plays and must not be called designed rushing. Combined opportunities are the disjoint union **O = D ∪ R**. For each role k, contribution is `sum(role EPA) / N_O`, combining frequency and shared observed value. Its denominator is not the role's run count. With no role opportunities, contribution is zero and per-role mean EPA is unavailable; neither describes zero ability.
+
+Use the exact original PBP/schedule, common-cohort exposure CSV and baseline D-key manifest described above, plus these accepted keyed partitions (only `in_R=TRUE` keys are used; numeric EPA comes from the original typed PBP):
+
+| Existing manifest | Required SHA256 |
+|---|---|
+| `rush_2023_keyed_partitions.csv` | `1648351bd64060d52041c9bfb977afe24cfde454788d013b7e4ffc3864f1ce36` |
+| `rush_2024_keyed_partitions.csv` | `a555e4020169a987c66f73351e95975f3c07faff559def179ba93cdbb11ef22c` |
+
+```sh
+Rscript rush_contribution.R "INPUT_2023" "INPUT_2024" "COHORT_CSV" "D_KEYS_CSV" "R2023_KEYS_CSV" "R2024_KEYS_CSV" "OUTPUT_DIR" "347a063258182a6558a0b372fc465b2637f09038b02175e89b61c3e23b0cd932"
+```
+
+Supply existing paths, including timestamp prefixes where present, and an existing writable output directory outside Git. The script needs installed dplyr, readr, arrow and digest only; no ignored design notes at runtime. Missing/changed hashes or target attribution/EPA contradictions stop execution. It freezes source/specification/script hashes, cohort, O keys/counts and new O-game maps before EPA sums or rates.
+
+The two primaries are 2023 odd/even O-game associations for the two contributions; the two secondaries are their full 2023–2024 associations. No other split or correlation contrast is computed. Whole-NFL-game deletions remove both teams, roles and half labels while recomputing numerator and denominator on unchanged membership/maps. Each season's Fisher replicates use their own mean for conditional correlation intervals. Separate marginal actor-season ratio intervals use every actor O game, including zero-role games. Outputs retain shares, role counts/games, per-role means, overlapping aborted/lateral/fumble/penalty diagnostics, undefined statuses and paired-actor influence checks, sorted by ID rather than performance.
+
+These are conditional working-model sensitivities, not demonstrated NFL coverage, rankings, forecasts or isolated mobility. R preserves whole-play and other participants' effects. S already contributes to EPA/D; the O-denominated measures must not be added to that D-denominated mean or presented as independent skill axes. Sparse signed EPA, usage/scheme, persistent support, selection and serial dependence limit interpretation. Website use requires a reviewed export-contract revision; this script does not publish comparison data.
 
 ## Export the annual comparison data
 
