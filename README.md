@@ -2,12 +2,13 @@
 
 Can public NFL data help describe repeatable quarterback execution with less dependence on supporting circumstances? This exploratory project also aims eventually to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
 
-Current code audits inputs, compares supplied nflfastR completion percentage over expected (CPOE) with ordinary completion percentage on identical eligible 2023 throws, and describes their 2023–2024 annual associations. These analyses concern selected regular-use passers, not a position-certified quarterback cohort or a validated overall score. Conditional game-jackknife intervals are working-model sensitivities; persistent context, serial dependence, survivor selection, and unknown CP model/training vintage remain limitations. One annual transition is not a clean historical forecast or repeated temporal validation.
+Current code audits inputs, compares supplied nflfastR completion percentage over expected (CPOE) with ordinary completion percentage on identical eligible 2023 throws, describes their 2023–2024 annual associations, and examines recorded sack-avoidance associations across fixed game sets and seasons. These analyses concern selected regular-use passers, not a position-certified quarterback cohort or a validated overall score. Conditional game-jackknife intervals are working-model sensitivities; persistent context, serial dependence, survivor selection, and unknown CP model/training vintage remain limitations. One annual transition is not a clean historical forecast or repeated temporal validation.
 
 ## Scripts and prerequisites
 
 - `audit_inputs.R`: downloads and audits official 2023 PBP/FTN inputs and a schedule reference; preserves originals and provenance receipts.
 - `pilot_accuracy.R`: uses existing exact snapshots for the 2023 same-throw interleaved/chronological split comparison and count-only FTN diagnostics.
+- `sack_repeatability.R`: uses exact 2023/2024 PBP/schedule and opportunity manifests for fixed-cohort recorded sack-avoidance associations; no FTN or pressure denominator.
 - `annual_stability.R`: uses existing exact PBP/schedule snapshots for the paired 2023–2024 annual comparison. Each year is a fixed stratum; leave-game deviations are centered on the full estimate, not the deletion mean. FTN is unnecessary for this script.
 
 The scripts use installed R packages; they do not install dependencies. Tested with R 4.6.0 and:
@@ -16,8 +17,8 @@ The scripts use installed R packages; they do not install dependencies. Tested w
 |---|---|---|
 | dplyr | 1.2.1 | All scripts; requires the modern join `relationship` argument |
 | readr | 2.2.0 | All scripts |
-| arrow | 25.0.0 | Audit, pilot, annual comparison and baseline; reading Parquet |
-| digest | 0.6.39 | Audit, pilot, annual comparison and baseline; SHA256 verification |
+| arrow | 25.0.0 | Audit, pilot, annual comparison, baseline and sack study; reading Parquet |
+| digest | 0.6.39 | Audit, pilot, annual comparison, baseline and sack study; SHA256 verification |
 | stringr | 1.6.0 | Audit, pilot and annual comparison; frozen receiver-description rule |
 | tidyr | 1.3.2 | Pilot and annual comparison |
 | curl | 7.1.0 | Input audit downloads |
@@ -85,6 +86,30 @@ The pilot freezes cohort and game assignments before summaries. It requires at l
 ```sh
 Rscript performance_baseline.R "INPUT_2023" "INPUT_2024" "ANNUAL_PREFIX_"
 ```
+
+## Recorded sack-avoidance repeatability
+
+`sack_repeatability.R` describes `100 × (dropbacks − recorded sacks) / dropbacks` for the same fixed 20 regular-use passers. Opportunities are recorded played passes, sacks and scramble-runs, with no CP, EPA-availability, E-game, penalty or description filter. The cohort was selected by at least 200 eligible throws and ten eligible games in **each** year, so survivor and CP-related selection remain. It is not a position-certified quarterback population.
+
+The primary analysis compares odd/even 2023 actor-games ordered by date and game ID. The only split sensitivity compares the first `ceiling(G/2)` actor-games with the rest; the secondary analysis compares full 2023 and 2024 seasons. Rates pool opportunities within actor-half/year; Pearson correlations weight actors equally. No 2024 split, ranking, pressure denominator or adjusted score is computed.
+
+Use the exact PBP/schedule snapshots above plus three preserved local opportunity/count manifests. They are inputs, not internal methods notes, and are not redistributed in this repository. Exact reproduction requires these matching bytes; the script never silently replaces them or downloads substitutes.
+
+| Argument | Existing manifest | Required SHA256 |
+|---|---|---|
+| `COHORT_CSV` | `common_cohort_exposures.csv`, 20 IDs and annual E exposure counts | `4460604f27bbbe432fd42e9bbdcf426315844d5fb996f769bbd268fe375235bf` |
+| `E_KEYS_CSV` | Annual comparison's `frozen_E_keys.csv` | `67f05a4386241620f24b4618ebd504931fa7659c5c8c57c4c9f5b2a3f9056808` |
+| `D_KEYS_CSV` | Observed-value baseline's `frozen_baseline_keys.csv` | `be1f386ebc899a29043491f93568388863447d789705c2fc0833e46b85b6d946` |
+
+Supply the full paths, including any timestamp prefixes, and an existing writable output directory outside Git. Only installed dplyr, readr, arrow and digest are required. The last argument identifies the fixed specification; no private design document is read at runtime.
+
+```sh
+Rscript sack_repeatability.R "INPUT_2023" "INPUT_2024" "COHORT_CSV" "E_KEYS_CSV" "D_KEYS_CSV" "OUTPUT_DIR" "e60420a5020804a5cafcd3eaf559b20d17ab716c52e9130e32f48c6ae1f070d7"
+```
+
+The script verifies source hashes and accepted E/D keys, independently reconstructs membership and split maps, and saves counts, keys, maps, contributing games and a design/script-hashed run manifest before rates. Timestamped outputs include actor-half/year counts and rates, all whole-NFL-game deletions, paired-actor influence checks, unavailable statuses, and complement/known-mean arithmetic checks. Zero-sack records remain; missing diagnostic flags remain explicit.
+
+Approximate 95% conditional working-model sensitivity intervals use Fisher-transformed correlations and delete complete NFL games across both teams, all selected actors and both half labels. Each season's replicates are centered on **their own mean**, then its finite-game variance contribution is summed. This prospectively specified annual centering differs from `annual_stability.R`; earlier CPOE outputs are unchanged. Undefined/boundary correlations or zero/nonfinite variance withhold the affected interval without dropping replicates or changing cohorts. These sensitivities do not establish NFL coverage, absolute agreement, player separation, pressure handling, isolated skill, prediction or overall decision quality; persistent surroundings, serial dependence, selection and rare sacks remain limitations.
 
 ## Optional evidence-summary figure
 
