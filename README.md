@@ -16,12 +16,13 @@ The scripts use installed R packages; they do not install dependencies. Tested w
 |---|---|---|
 | dplyr | 1.2.1 | All scripts; requires the modern join `relationship` argument |
 | readr | 2.2.0 | All scripts |
-| arrow | 25.0.0 | All scripts, reading Parquet |
-| digest | 0.6.39 | All scripts, SHA256 verification |
-| stringr | 1.6.0 | All scripts, frozen receiver-description rule |
+| arrow | 25.0.0 | Audit, pilot and annual comparison; reading Parquet |
+| digest | 0.6.39 | Audit, pilot and annual comparison; SHA256 verification |
+| stringr | 1.6.0 | Audit, pilot and annual comparison; frozen receiver-description rule |
 | tidyr | 1.3.2 | Pilot and annual comparison |
 | curl | 7.1.0 | Input audit downloads |
 | jsonlite | 2.0.0 | Input audit release metadata |
+| ggplot2 | 4.0.3 | Optional evidence-summary figure |
 
 Run from the repository root. Supply existing writable input workspaces outside version control, either external directories or locations covered by `.gitignore`. Inputs and timestamped outputs remain local. `INPUT_2023` and `INPUT_2024` below are placeholders for those existing directory paths, not literal required folder names.
 
@@ -76,6 +77,14 @@ Rscript pilot_accuracy.R "INPUT_2023"
 The pilot freezes cohort and game assignments before summaries. It requires at least 100 eligible throws and five games in each interleaved half and at least 20 qualifying passers. FTN labels remain diagnostic; missing labels are not false, and a nonmissing label does not establish applicability to every play.
 
 **Exact reproduction requires matching snapshots.** Release tags are mutable. If an official download no longer matches the required hash, the fixed analysis stops; a matching filename or tag is insufficient. Preserve original downloads, receipts and run records. Changed inputs/specifications constitute a different run, not exact reproduction.
+
+## Optional evidence-summary figure
+
+`plot_repeatability.R` reads existing interleaved/chronological pilot and annual interval CSVs plus their cohort-count CSVs; it performs no estimation. Supply the two full output prefixes, including their trailing underscores, and an unused PNG path in an existing local output directory. The figure distinguishes the two correlations from their paired difference and labels the different cohorts; it is an evidence summary rather than a player skill chart.
+
+```sh
+Rscript plot_repeatability.R "PILOT_PREFIX_" "ANNUAL_PREFIX_" "NEW_OUTPUT.png"
+```
 
 ## Code and data terms
 
