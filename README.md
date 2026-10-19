@@ -16,8 +16,8 @@ The scripts use installed R packages; they do not install dependencies. Tested w
 |---|---|---|
 | dplyr | 1.2.1 | All scripts; requires the modern join `relationship` argument |
 | readr | 2.2.0 | All scripts |
-| arrow | 25.0.0 | Audit, pilot and annual comparison; reading Parquet |
-| digest | 0.6.39 | Audit, pilot and annual comparison; SHA256 verification |
+| arrow | 25.0.0 | Audit, pilot, annual comparison and baseline; reading Parquet |
+| digest | 0.6.39 | Audit, pilot, annual comparison and baseline; SHA256 verification |
 | stringr | 1.6.0 | Audit, pilot and annual comparison; frozen receiver-description rule |
 | tidyr | 1.3.2 | Pilot and annual comparison |
 | curl | 7.1.0 | Input audit downloads |
@@ -77,6 +77,14 @@ Rscript pilot_accuracy.R "INPUT_2023"
 The pilot freezes cohort and game assignments before summaries. It requires at least 100 eligible throws and five games in each interleaved half and at least 20 qualifying passers. FTN labels remain diagnostic; missing labels are not false, and a nonmissing label does not establish applicability to every play.
 
 **Exact reproduction requires matching snapshots.** Release tags are mutable. If an official download no longer matches the required hash, the fixed analysis stops; a matching filename or tag is insufficient. Preserve original downloads, receipts and run records. Changed inputs/specifications constitute a different run, not exact reproduction.
+
+## Recorded-dropback observed-value baseline
+
+`performance_baseline.R` uses the exact PBP snapshots above and the matching annual `cohort_counts.csv` / `frozen_E_keys.csv` manifests to fix the common regular-use cohort by counts. It needs only installed dplyr, readr, arrow and digest. Supply the annual output prefix, including its trailing underscore. Outputs are sorted by actor ID/year: raw shared EPA totals, pooled opportunity means and marginal actor-game sensitivity intervals. Opportunities include recorded played passes, sacks and scrambles without a CP filter; designed rushing and the wider penalty universe are outside scope. This supplies no independent support-quality adjustment or overall score.
+
+```sh
+Rscript performance_baseline.R "INPUT_2023" "INPUT_2024" "ANNUAL_PREFIX_"
+```
 
 ## Optional evidence-summary figure
 
