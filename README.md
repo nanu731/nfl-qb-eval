@@ -8,6 +8,7 @@ Current code audits inputs, compares supplied nflfastR completion percentage ove
 
 - `audit_inputs.R`: downloads and audits official 2023 PBP/FTN inputs and a schedule reference; preserves originals and provenance receipts.
 - `pilot_accuracy.R`: uses existing exact snapshots for the 2023 same-throw interleaved/chronological split comparison and count-only FTN diagnostics.
+- `export_comparison.R`: exports only the frozen annual comparison and baseline aggregates with a separate payload-digest manifest.
 - `sack_repeatability.R`: uses exact 2023/2024 PBP/schedule and opportunity manifests for fixed-cohort recorded sack-avoidance associations; no FTN or pressure denominator.
 - `annual_stability.R`: uses existing exact PBP/schedule snapshots for the paired 2023–2024 annual comparison. Each year is a fixed stratum; leave-game deviations are centered on the full estimate, not the deletion mean. FTN is unnecessary for this script.
 
@@ -17,12 +18,12 @@ The scripts use installed R packages; they do not install dependencies. Tested w
 |---|---|---|
 | dplyr | 1.2.1 | All scripts; requires the modern join `relationship` argument |
 | readr | 2.2.0 | All scripts |
-| arrow | 25.0.0 | Audit, pilot, annual comparison, baseline and sack study; reading Parquet |
-| digest | 0.6.39 | Audit, pilot, annual comparison, baseline and sack study; SHA256 verification |
+| arrow | 25.0.0 | Audit, pilot, annual comparison, baseline, sack study and comparison export; reading Parquet |
+| digest | 0.6.39 | Audit, pilot, annual comparison, baseline, sack study and comparison export; SHA256 verification |
 | stringr | 1.6.0 | Audit, pilot and annual comparison; frozen receiver-description rule |
 | tidyr | 1.3.2 | Pilot and annual comparison |
 | curl | 7.1.0 | Input audit downloads |
-| jsonlite | 2.0.0 | Input audit release metadata |
+| jsonlite | 2.0.0 | Input audit release metadata and comparison JSON export |
 | ggplot2 | 4.0.3 | Optional evidence-summary figure |
 
 Run from the repository root. Supply existing writable input workspaces outside version control, either external directories or locations covered by `.gitignore`. Inputs and timestamped outputs remain local. `INPUT_2023` and `INPUT_2024` below are placeholders for those existing directory paths, not literal required folder names.
@@ -110,6 +111,22 @@ Rscript sack_repeatability.R "INPUT_2023" "INPUT_2024" "COHORT_CSV" "E_KEYS_CSV"
 The script verifies source hashes and accepted E/D keys, independently reconstructs membership and split maps, and saves counts, keys, maps, contributing games and a design/script-hashed run manifest before rates. Timestamped outputs include actor-half/year counts and rates, all whole-NFL-game deletions, paired-actor influence checks, unavailable statuses, and complement/known-mean arithmetic checks. Zero-sack records remain; missing diagnostic flags remain explicit.
 
 Approximate 95% conditional working-model sensitivity intervals use Fisher-transformed correlations and delete complete NFL games across both teams, all selected actors and both half labels. Each season's replicates are centered on **their own mean**, then its finite-game variance contribution is summed. This prospectively specified annual centering differs from `annual_stability.R`; earlier CPOE outputs are unchanged. Undefined/boundary correlations or zero/nonfinite variance withhold the affected interval without dropping replicates or changing cohorts. These sensitivities do not establish NFL coverage, absolute agreement, player separation, pressure handling, isolated skill, prediction or overall decision quality; persistent surroundings, serial dependence, selection and rare sacks remain limitations.
+
+## Export the annual comparison data
+
+`export_comparison.R` creates aggregate comparison JSON for the fixed 20-ID, 40-season-row cohort. It reconstructs CPOE and completion means only from the exact frozen in-cohort E keys joined one-to-one to the original PBP. It does not rerun eligibility, calculate individual CPOE/completion uncertainty or fit anything. Validation-only annual `r_C`, `r_B` and their difference must reproduce the accepted outputs within `1e-10`; disagreement stops export. EPA means, marginal conditional interval limits/statuses and dropback counts are copied from the existing baseline rows.
+
+Use the exact PBP/schedule snapshots above, the accepted annual and baseline output prefixes (including trailing underscores), and two separate existing writable directories for public-ready assets and private run evidence:
+
+```sh
+Rscript export_comparison.R "INPUT_2023" "INPUT_2024" "ANNUAL_PREFIX_" "BASELINE_PREFIX_" "ASSET_DIR" "LOCAL_EVIDENCE_DIR"
+```
+
+The annual prefix must provide `annual_associations.csv`, `conditional_intervals.csv`, `cohort_counts.csv`, `frozen_E_keys.csv`, `verified_sources.csv` and `run_record.rds`. The baseline prefix must provide `actor_season_results.csv` and `run_record.rds`. Every file is pinned by SHA256 in the script; these retained local inputs are not redistributed here. No ignored methods/context note is needed at runtime. Installed dplyr, readr, arrow, digest and jsonlite are sufficient.
+
+Outputs are `nfl-qb-2023-2024-v1.json` and `nfl-qb-2023-2024-v1.manifest.json`. The manifest separately records the payload SHA256, schema/data versions, actual generation time, seasons, cohort/row counts, units and aggregate hashes. Consumers must reject a mismatched or stale pair. The exporter checks this pair, preserves differing existing assets by stopping, and never silently fetches replacements. This is data preparation; no consumer UI or deployment is included.
+
+Rows use published GSIS IDs and observed abbreviated names, with source precision and native units. EPA performance remains separate from matched-row CPOE/completion; their denominators differ. Null interval limits indicate unavailability, never zero. No individual CPOE/completion intervals, FTN numbers, sack-study fields, percentiles, ranks, ratings or context-adjusted score are exported. Study-level intervals stay separate from player rows. Explicit public metadata preserves source attribution, transformation notices and analysis hashes; local paths, raw plays and run records remain private. PBP data attribution under CC BY 4.0 is separate from original-code MIT licensing. The conditional intervals do not establish NFL coverage, isolated skill, forecast validity or useful player separation.
 
 ## Optional evidence-summary figure
 
