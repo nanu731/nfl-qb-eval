@@ -150,6 +150,24 @@ Outputs are `nfl-qb-2023-2024-v1.json` and `nfl-qb-2023-2024-v1.manifest.json`. 
 
 Rows use published GSIS IDs and observed abbreviated names, with source precision and native units. EPA performance remains separate from matched-row CPOE/completion; their denominators differ. Null interval limits indicate unavailability, never zero. No individual CPOE/completion intervals, FTN numbers, sack-study fields, percentiles, ranks, ratings or context-adjusted score are exported. Study-level intervals stay separate from player rows. Explicit public metadata preserves source attribution, transformation notices and analysis hashes; local paths, raw plays and run records remain private. PBP data attribution under CC BY 4.0 is separate from original-code MIT licensing. The conditional intervals do not establish NFL coverage, isolated skill, forecast validity or useful player separation.
 
+## Export the broader descriptive profile
+
+`export_profile.R` packages accepted aggregates into schema v2 without rerunning eligibility, correlations or uncertainty calculations. It preserves every v1 player field and all three annual study rows, then adds recorded sack avoidance, separate scramble/non-scramble contributions and their existing marginal intervals. All three sack and four run study rows remain separate from the 40 player-season records.
+
+```sh
+Rscript export_profile.R "V1_JSON" "V1_MANIFEST" "SACK_PREFIX_" "RUSH_PREFIX_" "ASSET_DIR" "LOCAL_EVIDENCE_DIR"
+```
+
+Use existing, separate output directories outside Git and the exact retained aggregate snapshots pinned by SHA256 in the script. The sack prefix supplies `annual_actor_rates.csv`, `annual_counts.csv` and `results.csv`; annual side A means 2023, B means 2024. The run prefix supplies `actor_season_points.csv`, `actor_season_intervals.csv`, `results.csv`, `frozen_hashes.csv`, `run_manifest.rds`, `frozen_O_keys.csv` and `frozen_O_maps.csv`. Frozen keys/maps are hash-checked only and never serialized. Installed dplyr, readr, digest and jsonlite suffice; no private note is read at runtime.
+
+Outputs are `nfl-qb-2023-2024-v2.json` and `nfl-qb-2023-2024-v2.manifest.json`, data version `2023-2024-broader-profile-v2`. The script verifies complete one-to-one actor-season mappings, unchanged v1 scalars, D/O/role denominator identities, known statuses, integer counts, all ten study rows, source-precision JSON round-trips and the matching manifest. It refuses changed inputs or differing existing assets and preserves v1. Public metadata distinguishes the earlier exporter from the actual v2 script and retains upstream notices. Local evidence records remain outside the public assets.
+
+Native-unit domains use all 40 rows across both seasons and include available marginal endpoints. Signed measures include zero, percentages remain within 0–100, constant values expand by one native unit, and unavailable measures receive no invented domain. Correlations use −1 to 1, the paired correlation difference −2 to 2, and recorded composition 0–100 percent. Consumers must retain these shared scales and validate the payload digest, versions, generation time, counts, units, domains and input hashes against the manifest before use.
+
+Run contributions use `sum(role EPA)/N_O`, combining frequency and shared value. Role shares are converted from fractions to percent once. Per-run EPA is a separate diagnostic; no recorded role events means zero count/share/contribution and a null per-run mean. Missing evidence is never zero. Recorded non-scramble runs include aborted and lateral plays and must not be called designed rushing. Composition uses disjoint other D passes, sacks, scrambles and R, rather than overlapping diagnostic flags.
+
+Intervals remain conditional sensitivities, not tests of player differences or season changes. Annual CPOE retains its full-estimate-centered variance; sack/run studies retain their own-replicate-mean centering. The evidence does not establish independent traits, isolated mobility, forecasts, rankings, metric superiority or a context-adjusted overall score. Export preparation alone does not certify a consuming website or authorize publication.
+
 ## Optional evidence-summary figure
 
 `plot_repeatability.R` reads existing interleaved/chronological pilot and annual interval CSVs plus their cohort-count CSVs; it performs no estimation. Supply the two full output prefixes, including their trailing underscores, and an unused PNG path in an existing local output directory. The figure distinguishes the two correlations from their paired difference and labels the different cohorts; it is an evidence summary rather than a player skill chart.
