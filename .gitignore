@@ -40,11 +40,41 @@ vignettes/*.pdf
 .Renviron
 .env
 
-# pkgdown site
-docs/
+# Public documentation is tracked.
 
 # translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Local project coordination and working research
+AGENTS.md
+PROJECT_CONTEXT.md
+RESEARCH.md
+WORKFLOW.md
+DECISIONS.md
+HANDOFF.md
+HANDOFFS.md
+*.local.md
+.agents/
+.codex/
+.scratch/
+prompts/
+handoffs/
+council/
+
+# Local configuration and operating system files
+.env.*
+!.env.example
+.Renviron.*
+*.local
+.DS_Store
+Thumbs.db
+
+# Downloaded/intermediate inputs and local dependency libraries
+/data/raw/
+/data/interim/
+/data/cache/
+/renv/library/
+/renv/staging/
