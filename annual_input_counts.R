@@ -226,7 +226,7 @@ result <- tryCatch({
       relationship = "one-to-one") |> mutate(observed_P = coalesce(observed_P, 0L))
     stopifnot(all(P_check$P_rows == P_check$observed_P))
 
-    stage <- "all_actor_D_role_identity_and_EPA_gate"
+    stage <- "all_actor_D_identity_roles_and_selected_EPA_gate"
     expected <- reg$play_type == "pass" | (reg$play_type == "run" & reg$qb_scramble == 1)
     equivalence_bad <- is.na(expected) != is.na(reg$qb_dropback) |
       (!is.na(expected) & !is.na(reg$qb_dropback) & expected != reg$qb_dropback)
@@ -239,8 +239,8 @@ result <- tryCatch({
       TRUE ~ NA_character_))
     emit(count(reg, D_exclusion, play_type, penalty), paste0(year, "_D_exclusions"))
     D <- filter(reg, is.na(D_exclusion)) |> mutate(
-      role = case_when(play_type == "pass" & sack == 0 & qb_scramble == 0 ~ "other_pass",
-        play_type == "pass" & sack == 1 & qb_scramble == 0 ~ "sack",
+      role = case_when(play_type == "pass" & sack == 0 ~ "other_pass",
+        play_type == "pass" & sack == 1 ~ "sack",
         play_type == "run" & sack == 0 & qb_scramble == 1 ~ "scramble", TRUE ~ NA_character_),
       actor_id = if_else(play_type == "pass", passer_player_id, rusher_player_id),
       invalid_role = is.na(role), invalid_actor = !nonempty(actor_id) | !grepl("^00-[0-9]{7}$", actor_id),
@@ -248,7 +248,12 @@ result <- tryCatch({
         !is.na(rusher_player_id) | is.na(pass_attempt) | pass_attempt != 1,
         !is.na(passer_player_id) | is.na(rush_attempt) | rush_attempt != 1),
       invalid_EPA = !is.finite(epa))
-    bad_D <- filter(D, invalid_role | invalid_actor | invalid_raw_attribution | invalid_EPA)
+    # qb_scramble also records movement mentioned on passes; it does not
+    # override the recorded pass/sack classification. Preserve every overlap.
+    emit(filter(D, play_type == "pass", qb_scramble == 1),
+      paste0(year, "_pass_scramble_flag_overlaps"))
+    emit(filter(D, invalid_EPA), paste0(year, "_all_actor_missing_EPA"))
+    bad_D <- filter(D, invalid_role | invalid_actor | invalid_raw_attribution)
     emit(bad_D, paste0(year, "_D_contradictions"))
     emit(count(D, role, invalid_role, invalid_actor, invalid_raw_attribution, invalid_EPA),
       paste0(year, "_all_actor_D_diagnostics"))
@@ -270,6 +275,12 @@ result <- tryCatch({
       dropback_games = n(), sacks = sum(sacks), scramble_runs = sum(scramble_runs), .groups = "drop")
     chosen <- filter(cohort, season == year) |> left_join(counts, by = c("season", "player_key" = "actor_id"),
       relationship = "one-to-one")
+    # Eligibility was frozen using E exposure, independently of EPA availability.
+    # No opportunity is removed from a selected player's denominator.
+    selected_missing <- filter(D, actor_id %in% chosen$player_key, invalid_EPA)
+    emit(selected_missing, paste0(year, "_selected_missing_EPA"))
+    if (nrow(selected_missing) > 0)
+      stop("Selected player-season has nonfinite EPA; metric availability needs review: ", year)
     stopifnot(!anyNA(chosen), all(chosen$dropbacks >= chosen$eligible_throws),
       all(chosen$dropback_games >= chosen$eligible_games))
     selected_E <- frozen_E |> filter(passer_player_id %in% chosen$player_key)
@@ -331,9 +342,11 @@ files <- list.files(out, pattern = paste0("^", run), full.names = TRUE)
 emit(tibble(file = basename(files), bytes = file.info(files)$size,
   sha256 = vapply(files, sha, character(1))), "output_manifest")
 saveRDS(list(status = result, active_season = active_year, stage = stage, reason = failure,
-  script_sha256 = sha(script), design_version = "independent-annual-display-1.0",
+  script_sha256 = sha(script), design_version = "independent-annual-display-1.1",
   accepted_design_sha256 = "7d2f41e4ed11aa6f1a54ba2f6a456bd42073f0ecfd62eded09ea6a13eae10984",
   diagnostic_amendment = "D1: exact fingerprinted reversed2006 descriptions only",
+  annual_display_amendment = "AD-1.1: recorded pass roles; EPA completeness on frozen eligible actor-seasons",
+  annual_display_amendment_sha256 = "7d9c08e156c85fb7c69005b79c192c9b0e45d312ae3b8d5f94c4cdfcb8887ce1",
   diagnostic_normalizations_applied = normalized_total,
   generating_CP_EP_model_vintage = "unknown", no_performance_estimation = TRUE), path("run_record.rds"))
 writeLines(capture.output(sessionInfo()), path("session.txt"))
