@@ -1,11 +1,15 @@
-# nfl-qb-eval
+# NFL QBs Re-evaluated
 
 Can public NFL data help describe repeatable quarterback execution with less dependence on supporting circumstances? This exploratory project also aims eventually to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
 
-Current code audits inputs, compares supplied nflfastR completion percentage over expected (CPOE) with ordinary completion percentage on identical eligible 2023 throws, describes their 2023–2024 annual associations, and examines recorded sack-avoidance associations across fixed game sets and seasons. These analyses concern selected regular-use passers, not a position-certified quarterback cohort or a validated overall score. Conditional game-jackknife intervals are working-model sensitivities; persistent context, serial dependence, survivor selection, and unknown CP model/training vintage remain limitations. One annual transition is not a clean historical forecast or repeated temporal validation.
+The descriptive annual exports cover 560 qualifying player-seasons across 2006–2025, with 2011 withheld because of unresolved duplicate-event and pass-depth conflicts. Eligibility requires at least 200 model-eligible throws in ten games within each season. The exports contain shared play value per dropback, completions above the supplied model expectation, recorded sack avoidance, and separate completion residuals for short, medium and deep throws. These describe recorded outcomes and retain supporting-context and model limitations.
+
+Separate validation code audits inputs, compares supplied nflfastR completion percentage over expected (CPOE) with ordinary completion percentage on identical eligible 2023 throws, describes their 2023–2024 annual associations, and examines recorded sack-avoidance associations across fixed game sets and seasons. These analyses concern selected regular-use passers, not a position-certified quarterback cohort or a validated overall score. Conditional game-jackknife intervals are working-model sensitivities; persistent context, serial dependence, survivor selection, and unknown CP model/training vintage remain limitations. One annual transition is not a clean historical forecast or repeated temporal validation.
 
 ## Scripts and prerequisites
 
+- `annual_input_counts.R`: verifies frozen annual eligibility, recorded-dropback roles, source identity and EPA availability before expanded summaries.
+- `annual_display.R`: calculates separate annual outcome and depth-residual exports from the verified opportunities, retaining source hashes, conditional uncertainty and explicit unavailable states.
 - `audit_inputs.R`: downloads and audits official 2023 PBP/FTN inputs and a schedule reference; preserves originals and provenance receipts.
 - `pilot_accuracy.R`: uses existing exact snapshots for the 2023 same-throw interleaved/chronological split comparison and count-only FTN diagnostics.
 - `export_comparison.R`: exports only the frozen annual comparison and baseline aggregates with a separate payload-digest manifest.
@@ -167,6 +171,24 @@ Native-unit domains use all 40 rows across both seasons and include available ma
 Run contributions use `sum(role EPA)/N_O`, combining frequency and shared value. Role shares are converted from fractions to percent once. Per-run EPA is a separate diagnostic; no recorded role events means zero count/share/contribution and a null per-run mean. Missing evidence is never zero. Recorded non-scramble runs include aborted and lateral plays and must not be called designed rushing. Composition uses disjoint other D passes, sacks, scrambles and R, rather than overlapping diagnostic flags.
 
 Intervals remain conditional sensitivities, not tests of player differences or season changes. Annual CPOE retains its full-estimate-centered variance; sack/run studies retain their own-replicate-mean centering. The evidence does not establish independent traits, isolated mobility, forecasts, rankings, metric superiority or a context-adjusted overall score. Export preparation alone does not certify a consuming website or authorize publication.
+
+## Independent annual and depth exports
+
+The annual display uses each season's qualifying recorded passers independently; it does not require a player to qualify in adjacent years. The older paired studies and their 20-player 2023–2024 cohort remain separate. All 560 annual records and their original 40-record overlap were independently reconciled before consumer use.
+
+`annual_display.R` consumes preserved, hash-pinned count-audit manifests, the official GSIS-keyed display-name snapshot, immutable v2 assets for reconciliation, and depth-count evidence. It does not download replacement data or read internal planning documents. Supply an existing empty output directory; inputs and private ledgers stay outside version control.
+
+```sh
+Rscript annual_display.R "COUNT_PREFIX_" "PLAYERS_CSV" "V2_JSON" "V2_MANIFEST" "TRAIT_COUNT_DIR" "EMPTY_OUTPUT_DIR"
+```
+
+Outputs are `nfl-qb-annual-2006-2025-v1.json` (schema 3) and `nfl-qb-depth-2006-2025-v1.json` (schema 1), each with a matching digest manifest. The annual asset contains 560 records. The depth asset preserves 2,240 records, including a negative-depth diagnostic bin. Both catalogs show 2011 as source-blocked without fabricated performance rows. Original v2 files remain unchanged.
+
+Depth bins use intended air yards: negative [−15,0), short [0,10), medium [10,20), and deep [20,70). Each residual is `100 × sum(completion − supplied completion probability) / included throws`, in percentage points. The bins partition the same eligible throws used for annual CPOE. They measure completion outcomes relative to a supplied expectation, rather than observed ball placement or isolated accuracy.
+
+EPA intervals delete complete recorded-dropback games. Depth intervals delete every seasonal eligible-throw game, including games with no throws in the selected bin. These marginal game-jackknife sensitivities omit uncertainty in model calibration, source labels, supporting players and opportunity selection. They neither test differences between players, years or depths nor provide simultaneous 95% coverage across three depth positions. Sparse deep samples and unknown upstream CP/EP training vintage remain limitations.
+
+Native display bounds are frozen over the complete accepted reference data, including available endpoints and zero for signed measures. The three displayed depth bins share one percentage-point domain. Any radial transformation is display geometry; equal distances across different statistics do not represent equal ability. These exports contain no percentile, arm-strength rating, processing score, overall winner or context-neutral talent estimate.
 
 ## Optional evidence-summary figure
 
