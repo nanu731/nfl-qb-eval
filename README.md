@@ -1,4 +1,4 @@
-# NFL QBs Re-evaluated
+# NFL QBs Visualized
 
 Can public NFL data help describe repeatable quarterback execution with less dependence on supporting circumstances? This exploratory project also aims eventually to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
 
@@ -10,6 +10,7 @@ Separate validation code audits inputs, compares supplied nflfastR completion pe
 
 - `annual_input_counts.R`: verifies frozen annual eligibility, recorded-dropback roles, source identity and EPA availability before expanded summaries.
 - `annual_display.R`: calculates separate annual outcome and depth-residual exports from the verified opportunities, retaining source hashes, conditional uncertainty and explicit unavailable states.
+- `export_annual_mobility.R`: exports annual recorded scramble contribution for the same frozen player-seasons, with explicit unavailable records and conditional game-sampling ranges.
 - `audit_inputs.R`: downloads and audits official 2023 PBP/FTN inputs and a schedule reference; preserves originals and provenance receipts.
 - `pilot_accuracy.R`: uses existing exact snapshots for the 2023 same-throw interleaved/chronological split comparison and count-only FTN diagnostics.
 - `export_comparison.R`: exports only the frozen annual comparison and baseline aggregates with a separate payload-digest manifest.
@@ -189,6 +190,22 @@ Depth bins use intended air yards: negative [−15,0), short [0,10), medium [10,
 EPA intervals delete complete recorded-dropback games. Depth intervals delete every seasonal eligible-throw game, including games with no throws in the selected bin. These marginal game-jackknife sensitivities omit uncertainty in model calibration, source labels, supporting players and opportunity selection. They neither test differences between players, years or depths nor provide simultaneous 95% coverage across three depth positions. Sparse deep samples and unknown upstream CP/EP training vintage remain limitations.
 
 Native display bounds are frozen over the complete accepted reference data, including available endpoints and zero for signed measures. The three displayed depth bins share one percentage-point domain. Any radial transformation is display geometry; equal distances across different statistics do not represent equal ability. These exports contain no percentile, arm-strength rating, processing score, overall winner or context-neutral talent estimate.
+
+## Annual recorded scramble contribution
+
+`export_annual_mobility.R` extends the recorded scramble-contribution display to the same 560 qualifying player-seasons. It reconstructs disjoint recorded dropbacks **D** and recorded non-scramble actor runs **R**, then uses their union **O = D ∪ R**. The displayed contribution is `sum(scramble EPA) / number of O plays`. It combines scramble frequency with shared play value; it does not measure isolated mobility, running speed or designed-rushing skill.
+
+```sh
+Rscript export_annual_mobility.R "PBP_DIR" "SCHEDULE_DIR" "ACCEPTED_ASSETS_DIR" "EMPTY_OUTPUT_DIR"
+```
+
+Supply existing directories. `PBP_DIR` contains the 19 preserved `play_by_play_<year>.parquet` snapshots for 2006–2025 excluding 2011. `SCHEDULE_DIR` contains `historical_schedule_reference.rds` and `schedule_reference.rds`. `ACCEPTED_ASSETS_DIR` contains the unchanged v2, annual and depth JSON/manifest pairs described above. The exporter verifies every source and asset hash, the frozen annual membership and all selected opportunity-key sets before aggregation. It uses installed dplyr, readr, arrow, digest and jsonlite; no internal planning document, network download or additional package is required.
+
+Outputs are `nfl-qb-mobility-2006-2025-v1.json` and its digest manifest, plus private verification, source-provenance, game-deletion and original-study reconciliation files. Keep the latter files outside version control. The original six assets and the 40-record paired study remain unchanged. Reproduction requires their exact retained snapshots; changing a filename or retrieving a newer release is insufficient.
+
+There are 559 finite contributions. Kyle Boller’s 2007 record retains its counts but withholds its point and range because one non-scramble opportunity has a recorded-role contradiction. The 2011 source block remains. Four seasons with no recorded scrambles retain genuine zero contributions and collapsed conditional ranges; missing evidence is never assigned zero. Historical team-code aliases are normalized solely for schedule comparisons, without altering raw sources or opportunity membership.
+
+Conditional game-jackknife ranges delete every O game, including games with no scrambles and eight games containing only R opportunities. They describe sensitivity to the observed game sample, not demonstrated coverage, player differences or forecasts. Any consumer percentile must use finite values from the selected season’s frozen peer group, with its actual N displayed; it must not reuse the earlier paired cohort. Supporting players, scheme, opportunity selection, unknown upstream EP model vintage and whole-play attribution remain limitations.
 
 ## Optional evidence-summary figure
 
