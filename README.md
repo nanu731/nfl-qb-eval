@@ -1,6 +1,6 @@
 # NFL QBs Visualized
 
-Can public NFL data help describe repeatable quarterback execution with less dependence on supporting circumstances? This exploratory project also aims eventually to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
+How do quarterbacks compare when we isolate them from their team and situation? This exploratory project also aims eventually to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
 
 The descriptive annual exports cover 560 qualifying player-seasons across 2006–2025, excluding 2011 because of unresolved duplicate-event and pass-depth conflicts. Eligibility requires at least 200 model-eligible throws in ten games within each season. The exports contain shared play value per dropback, completions above the supplied model expectation, recorded sack avoidance, and separate completion residuals for short, medium and deep throws. These describe recorded outcomes and retain supporting-context and model limitations.
 
