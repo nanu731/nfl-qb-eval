@@ -1,0 +1,292 @@
+{
+  "schema_version": 3,
+  "data_version": "2006-2025-independent-annual-v1",
+  "dataset_kind": "independent_annual_display",
+  "generated_utc": "2026-10-20T02:22:52Z",
+  "payload": {
+    "filename": "nfl-qb-annual-2006-2025-v1.json",
+    "sha256": "4a5afb5431eab1ba9119af49ae175fa5abd899d70e3f58ea9f5906e76122ba68"
+  },
+  "seasons": [2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+  "season_catalog": [
+    {
+      "season": 2006,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2007,
+      "status": "exported",
+      "reason": null,
+      "row_count": 27
+    },
+    {
+      "season": 2008,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2009,
+      "status": "exported",
+      "reason": null,
+      "row_count": 31
+    },
+    {
+      "season": 2010,
+      "status": "exported",
+      "reason": null,
+      "row_count": 31
+    },
+    {
+      "season": 2011,
+      "status": "source_blocked",
+      "reason": "unresolved_duplicate_events_and_air_yards",
+      "row_count": 0
+    },
+    {
+      "season": 2012,
+      "status": "exported",
+      "reason": null,
+      "row_count": 32
+    },
+    {
+      "season": 2013,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2014,
+      "status": "exported",
+      "reason": null,
+      "row_count": 27
+    },
+    {
+      "season": 2015,
+      "status": "exported",
+      "reason": null,
+      "row_count": 28
+    },
+    {
+      "season": 2016,
+      "status": "exported",
+      "reason": null,
+      "row_count": 30
+    },
+    {
+      "season": 2017,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2018,
+      "status": "exported",
+      "reason": null,
+      "row_count": 30
+    },
+    {
+      "season": 2019,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2020,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2021,
+      "status": "exported",
+      "reason": null,
+      "row_count": 31
+    },
+    {
+      "season": 2022,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2023,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    },
+    {
+      "season": 2024,
+      "status": "exported",
+      "reason": null,
+      "row_count": 32
+    },
+    {
+      "season": 2025,
+      "status": "exported",
+      "reason": null,
+      "row_count": 29
+    }
+  ],
+  "row_count": 560,
+  "row_keys_sha256": "2d0d23a86a39598fad210aa062700990de6282168b2149ab987fb4b084ccb59c",
+  "units": {
+    "cpoe_pp": "percentage_points",
+    "completion_pct": "percent",
+    "eligible_throws": "throws",
+    "eligible_games": "actor_games",
+    "dropbacks": "dropbacks",
+    "dropback_games": "actor_games",
+    "sacks": "sacks",
+    "scramble_runs": "runs",
+    "sack_avoidance_pct": "percent",
+    "epa_per_dropback": "expected_points_per_dropback",
+    "epa_lower": "expected_points_per_dropback",
+    "epa_upper": "expected_points_per_dropback"
+  },
+  "domains": {
+    "cpoe_pp": {
+      "min": -12.007859821427513,
+      "max": 10.781274739084607,
+      "unit": "percentage_points",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "completion_pct": {
+      "min": 49.794238683127581,
+      "max": 76.986301369863014,
+      "unit": "percent",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "sack_avoidance_pct": {
+      "min": 85.84615384615384,
+      "max": 98.297213622291025,
+      "unit": "percent",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "epa_per_dropback": {
+      "min": -0.59738456065345802,
+      "max": 0.57839530773969272,
+      "unit": "expected_points_per_dropback",
+      "status": "available",
+      "includes_marginal_limits": true,
+      "constant_observed": false
+    }
+  },
+  "analysis_versions": {
+    "annual": {
+      "version": "AD-1.0+AD-1.1",
+      "specification_sha256": "7d9c08e156c85fb7c69005b79c192c9b0e45d312ae3b8d5f94c4cdfcb8887ce1"
+    },
+    "depth": {
+      "version": "DPX-1.0",
+      "specification_sha256": "d097199d263267202330d3f17d4bb3b1b86aa5311c822f992326f6fb1d41206a"
+    },
+    "export": {
+      "version": "annual-depth-1.0",
+      "script_sha256": "1b3a4ee2dcb0a2b52ca36da47af6affba937f6f3ce496ccf57766622f6c8e826"
+    }
+  },
+  "aggregate_input_hashes": {
+    "annual_membership_counts": "6086987ab160812cce3a07cb5eff00447a0b06d39c166d0df63e0c0635f29552",
+    "E_keys": "6ae887b1328a8aea8ccc194eb5986bc7cdad460e152295adbe44cef20885744f",
+    "D_manifest": "fe6c9ce3c74c9c3fabfe0cfbb6343368cc923ba3a58498e4d7791e2ef85c79c3",
+    "count_gate_outputs": "4af063b1cfd8466cd76e17e693ffd55e436c7db03e615b5f371d57bd834989c6",
+    "trait_bin_counts": "0abeb174a03c8f0567f04e4cb447d2ec539e9a18983c34e24819c6b8f40ee376",
+    "trait_common_counts": "75c250f0a6963c4083ed8acb2ffc6b53c8e5422ca564795c78e2fc2c58dcb22b",
+    "trait_season_counts": "07b54010c8094219d04dc0644adfa20245ce3f2854fbdbe50f3ae9fe17b61036",
+    "preserved_v2_payload": "56c45de0fefde398d74ca31763e56fd86b60c43dd2c3f3b20be566acb57241e1",
+    "preserved_v2_manifest": "a707dce3334864193fde79576c69940170b5cadb59ce3fa35df7b7b4f1878a62",
+    "player_names": "87495575e01a608a52c453db95faad23bcf3c8e216d90c3cbd9b6a15b25afc6e"
+  },
+  "source_hashes": [
+    {
+      "season": 2006,
+      "sha256": "f3d45c8cf41fa860ec22519490781eb19a00cf04cbf039b28af671bfcb11c2b4"
+    },
+    {
+      "season": 2007,
+      "sha256": "bcfded2ff41b221617e38e48cbc56fd797f336363436ed5b5da17659caede9a9"
+    },
+    {
+      "season": 2008,
+      "sha256": "f625e836a0117698feaad1a6e84f4ab341ff03197c1904313836ef7313af0f07"
+    },
+    {
+      "season": 2009,
+      "sha256": "17ba96f594a7b84c86060a99a3082158ebab206672d6c16036a069829d77dee7"
+    },
+    {
+      "season": 2010,
+      "sha256": "d2ef9c407319719910ad8de8c4c1b88f0ea945ffb3f78f48ef32fa3ed3a7573b"
+    },
+    {
+      "season": 2011,
+      "sha256": "c54753b8137b88dab260489b1462cbf1309c3d11741eb8d10e5f1b0a9b8795b1"
+    },
+    {
+      "season": 2012,
+      "sha256": "447b90789104aac70427ec9d3b51df7247234029d0ecabd269279369b1cc6278"
+    },
+    {
+      "season": 2013,
+      "sha256": "f454605a1983b3946baf0ffadf3a0b9f5e04735c4b84732e0483f2049a780d00"
+    },
+    {
+      "season": 2014,
+      "sha256": "54c01408d8f0ff9e013a4ea51428b91d610101f72545d082e932f5710e2fb4f7"
+    },
+    {
+      "season": 2015,
+      "sha256": "01b5ae7d06633a2e66b418404461a3d4ff055ad2f3a87d453cebcc8d3fda7ed9"
+    },
+    {
+      "season": 2016,
+      "sha256": "95eba04e2145e3c1c8ca502f2a3a76cfb0a5990680c3fb480f02a74a45f54a3b"
+    },
+    {
+      "season": 2017,
+      "sha256": "84eacd963c1fdd45965f6222c62e9329a7f3412f029d92c1ac5e34a1bb4d3710"
+    },
+    {
+      "season": 2018,
+      "sha256": "2e6f2dce7c7ebd46e985cabe0c17eb72b39a77f98cb4478409294f50b5820150"
+    },
+    {
+      "season": 2019,
+      "sha256": "60c3067017db2d28a78f66a79b657268be8578d9a5288e6a827efdcd7fe42540"
+    },
+    {
+      "season": 2020,
+      "sha256": "8889f5d8782b5c5dce3c3644acdc0322b228a7e9cb13fa36cbac250e260e9f60"
+    },
+    {
+      "season": 2021,
+      "sha256": "333ad34378e5339d5172717cc83378e908daf02c8699416ab3e17c2ec10f78d8"
+    },
+    {
+      "season": 2022,
+      "sha256": "931121d8897779d7944e2a293e92ed8799c8e5cceef84096ac42339003fedc09"
+    },
+    {
+      "season": 2023,
+      "sha256": "bd3484731408def6b0ec93225bba2bd7b2c65769ca707a2b9444d891abdc6776"
+    },
+    {
+      "season": 2024,
+      "sha256": "3fd2896bc0b911b615142d2f1fabae54a4bbba5ab7b73b28187b118ef8af6a3b"
+    },
+    {
+      "season": 2025,
+      "sha256": "c6ecedd6d678cc37ed316b23ef84ee1ec6abb69c514bb11868a7ebd5a367df29"
+    }
+  ],
+  "export_script_sha256": "1b3a4ee2dcb0a2b52ca36da47af6affba937f6f3ce496ccf57766622f6c8e826"
+}

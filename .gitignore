@@ -78,3 +78,9 @@ Thumbs.db
 /data/cache/
 /renv/library/
 /renv/staging/
+
+# Local frontend tooling and verification outputs
+node_modules/
+dist/
+coverage/
+*.local.*

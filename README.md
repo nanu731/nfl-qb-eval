@@ -2,9 +2,50 @@
 
 Can public NFL data help describe repeatable quarterback execution with less dependence on supporting circumstances? This exploratory project also aims eventually to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
 
-The descriptive annual exports cover 560 qualifying player-seasons across 2006–2025, with 2011 withheld because of unresolved duplicate-event and pass-depth conflicts. Eligibility requires at least 200 model-eligible throws in ten games within each season. The exports contain shared play value per dropback, completions above the supplied model expectation, recorded sack avoidance, and separate completion residuals for short, medium and deep throws. These describe recorded outcomes and retain supporting-context and model limitations.
+The descriptive annual exports cover 560 qualifying player-seasons across 2006–2025, excluding 2011 because of unresolved duplicate-event and pass-depth conflicts. Eligibility requires at least 200 model-eligible throws in ten games within each season. The exports contain shared play value per dropback, completions above the supplied model expectation, recorded sack avoidance, and separate completion residuals for short, medium and deep throws. These describe recorded outcomes and retain supporting-context and model limitations.
 
 Separate validation code audits inputs, compares supplied nflfastR completion percentage over expected (CPOE) with ordinary completion percentage on identical eligible 2023 throws, describes their 2023–2024 annual associations, and examines recorded sack-avoidance associations across fixed game sets and seasons. These analyses concern selected regular-use passers, not a position-certified quarterback cohort or a validated overall score. Conditional game-jackknife intervals are working-model sensitivities; persistent context, serial dependence, survivor selection, and unknown CP model/training vintage remain limitations. One annual transition is not a clean historical forecast or repeated temporal validation.
+
+## Explore the project
+
+[Interactive quarterback profiles and season comparisons](https://www.nslanalytics.com/projects/nfl-qbs-re-evaluated/)
+
+This repository contains the R analyses, the published aggregate datasets, and the NFL-specific chart implementation. It preserves the distinction between measured season outcomes and expert assessments; neither establishes seven isolated skills or an overall talent score.
+
+| Location | Contents |
+|---|---|
+| Root `*.R` files | Input audits, statistical analyses, plotting, and aggregate exporters |
+| `public/data/` | Eight versioned JSON files: four published datasets and their checksum manifests |
+| `src/lib/` | Data validation, percentile calculations, attributed expert ranks, and chart interaction code |
+| `src/components/` | NFL comparison interface and its shared layout/help components |
+| `src/content/projects/` | Public project explanation, formulas, definitions, and limitations |
+| `scripts/` | Aggregate, percentile, profile, and player-search verification |
+
+The chart sources match the released [portfolio implementation at commit `6c6b765`](https://github.com/nanu731/portfolio/tree/6c6b765). The portfolio owns the Astro application configuration, site theme, fonts, routing and deployment. These NFL files integrate with that application; this analysis repository is not a standalone website build. No other project's data or application code is copied here.
+
+### Published data
+
+The four dataset/manifest pairs are the original fixed-cohort 2023–2024 comparison, annual outcomes, annual passing-depth outcomes, and annual scramble contribution. Together they preserve the website's accepted data, source precision, unavailable values, attribution and checksums. The original study's ten association rows remain separate from its 40 player-season rows. Annual files cover 560 qualifying player-seasons from 2006–2025, excluding 2011; annual Mobility has 559 finite values.
+
+Raw play-by-play downloads, FTN charting records, private run workspaces and intermediate evidence are not included. The exporters document their exact input requirements and verify retained snapshot hashes; downloading a newer upstream release is not guaranteed to reproduce the same inputs.
+
+### Verify the published files
+
+Use Node.js 24 or later from this repository root. These checks use built-in Node modules and install no packages:
+
+```sh
+node scripts/verify-nfl-percentiles.mjs
+node scripts/verify-nfl-mobility.mjs
+```
+
+Full profile and search integration checks additionally need a checkout of the linked portfolio revision with its production build already generated. `NFL_PORTFOLIO_ROOT` identifies that checkout. The checks use this repository's NFL code/data and the portfolio's built pages or NBA search reference:
+
+```sh
+NFL_PORTFOLIO_ROOT=/path/to/portfolio node scripts/verify-nfl-profile.mjs
+NFL_PORTFOLIO_ROOT=/path/to/portfolio node scripts/verify-nfl-search.mjs
+```
+
+These are source and data checks. Browser interaction and visual checks are separate.
 
 ## Scripts and prerequisites
 
@@ -203,7 +244,7 @@ Supply existing directories. `PBP_DIR` contains the 19 preserved `play_by_play_<
 
 Outputs are `nfl-qb-mobility-2006-2025-v1.json` and its digest manifest, plus private verification, source-provenance, game-deletion and original-study reconciliation files. Keep the latter files outside version control. The original six assets and the 40-record paired study remain unchanged. Reproduction requires their exact retained snapshots; changing a filename or retrieving a newer release is insufficient.
 
-There are 559 finite contributions. Kyle Boller’s 2007 record retains its counts but withholds its point and range because one non-scramble opportunity has a recorded-role contradiction. The 2011 source block remains. Four seasons with no recorded scrambles retain genuine zero contributions and collapsed conditional ranges; missing evidence is never assigned zero. Historical team-code aliases are normalized solely for schedule comparisons, without altering raw sources or opportunity membership.
+There are 559 finite contributions. Kyle Boller’s 2007 record retains its counts but withholds its point and range because one non-scramble opportunity has a recorded-role contradiction. 2011 remains excluded. Four seasons with no recorded scrambles retain genuine zero contributions and collapsed conditional ranges; missing evidence is never assigned zero. Historical team-code aliases are normalized solely for schedule comparisons, without altering raw sources or opportunity membership.
 
 Conditional game-jackknife ranges delete every O game, including games with no scrambles and eight games containing only R opportunities. They describe sensitivity to the observed game sample, not demonstrated coverage, player differences or forecasts. Any consumer percentile must use finite values from the selected season’s frozen peer group, with its actual N displayed; it must not reuse the earlier paired cohort. Supporting players, scheme, opportunity selection, unknown upstream EP model vintage and whole-play attribution remain limitations.
 
@@ -223,4 +264,8 @@ Original project code is [MIT licensed](LICENSE). Third-party data have separate
 - The released FTN subset is documented as CC BY-SA 4.0 with attribution **FTN Data via nflverse**; see the [official FTN loader documentation](https://nflreadr.nflverse.com/reference/load_ftn_charting.html). This does not grant rights to unreleased FTN products.
 - The separately maintained [nfldata schedule source](https://github.com/nflverse/nfldata) has its own upstream notices. Dataset availability and the code's MIT license do not settle every proposed derived-output use.
 
-Raw inputs and numerical FTN-derived outputs are not redistributed here. Any future public dataset, combined database, figure, or other derived output requires source-specific attribution and permissions assessment.
+The published aggregates in `public/data/` derive from nflverse PBP and retain CC BY 4.0 attribution and transformation notices in their metadata. Their data terms remain separate from the MIT license for original project code. Raw inputs and numerical FTN-derived outputs are not redistributed here.
+
+The chart code also contains minimal attributed ESPN preseason ranking facts, with links, actual editions, categories, dates, and panel or author descriptions. These are expert judgments rather than tracking measurements, and ranks are not skill percentiles. ESPN material is not covered by this repository's MIT license or represented as an openly licensed dataset. No full articles are reproduced.
+
+Additional datasets, combined databases, figures or other derived outputs require their own source-specific attribution and permissions assessment.

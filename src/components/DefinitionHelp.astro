@@ -1,0 +1,212 @@
+---
+interface Props {
+	id: string;
+	label: string;
+	compact?: boolean;
+	detailTarget?: string;
+	detailLabel?: string;
+}
+const { id, label, compact = false, detailTarget, detailLabel = 'See all definitions' } = Astro.props;
+---
+
+<definition-help data-term={id}>
+	<button id={`term-${id}`} data-definition-trigger type="button" class:list={['definition-trigger', { compact }]}
+		aria-label={`Explain ${label}`} aria-expanded="false"
+		aria-controls={`definition-popup-${id}`} aria-describedby={`definition-copy-${id}`}>
+		<span data-help-label>{compact ? '?' : label}</span>
+	</button>
+	<span id={`definition-popup-${id}`} class="definition-panel" popover="manual" role="note" aria-labelledby={`term-${id}`}>
+		<span id={`definition-copy-${id}`} data-help-copy><slot /></span>
+		{detailTarget && <button type="button" class="definition-detail" data-detail-target={detailTarget}
+			aria-controls={detailTarget} aria-describedby={detailTarget}>{detailLabel}</button>}
+	</span>
+</definition-help>
+
+<script>
+	class DefinitionHelp extends HTMLElement {
+		private static active?: DefinitionHelp;
+		private pinned = false;
+		private dismissed = false;
+		private events?: AbortController;
+		private closeTimer?: ReturnType<typeof setTimeout>;
+		private pointerInside = false;
+		private get trigger() { return this.querySelector('button')!; }
+		private get panel() { return this.querySelector<HTMLElement>('[popover]')!; }
+		private get isOpen() { return this.trigger.getAttribute('aria-expanded') === 'true'; }
+
+		connectedCallback() {
+			this.events?.abort();
+			this.events = new AbortController();
+			const options = { signal: this.events.signal };
+			// Both surfaces keep hover open; a short grace period covers pointer transit.
+			for (const surface of [this.trigger, this.panel]) {
+				surface.addEventListener('pointerenter', (event) => {
+					if (event.pointerType !== 'mouse') return;
+					const active = DefinitionHelp.active;
+					if (active && active !== this && active.contains(document.activeElement)) return;
+					this.pointerInside = true;
+					clearTimeout(this.closeTimer);
+					this.open();
+				}, options);
+				surface.addEventListener('pointerleave', () => {
+					this.pointerInside = false;
+					clearTimeout(this.closeTimer);
+					this.closeTimer = setTimeout(() => {
+						if (!this.pinned && !this.contains(document.activeElement)) this.close();
+						if (!this.contains(document.activeElement)) this.dismissed = false;
+					}, 200);
+				}, options);
+			}
+			this.trigger.addEventListener('focus', () => this.open(), options);
+			this.addEventListener('focusout', (event) => {
+				if (!(event.relatedTarget instanceof Node) || !this.contains(event.relatedTarget)) {
+					if (!this.pointerInside) this.close();
+					this.dismissed = false;
+				}
+			}, options);
+			this.trigger.addEventListener('click', () => {
+				if (this.pinned) this.close(true);
+				else { this.dismissed = false; this.open(); this.pinned = true; }
+			}, options);
+			this.querySelector<HTMLButtonElement>('[data-detail-target]')?.addEventListener('click', (event) => {
+				const id = (event.currentTarget as HTMLButtonElement).dataset.detailTarget!;
+				const target = document.getElementById(id);
+				if (!target?.matches('[data-reference-target]')) return;
+				// Preserve the explorer in this document when Back returns to the term.
+				history.replaceState({ ...history.state, nbaDefinitionOrigin: this.trigger.id, nbaDefinitionFragment: location.hash }, '');
+				history.pushState({ ...history.state, nbaDefinitionOrigin: null }, '', `#${id}`);
+				this.close(true);
+				focusReference(target);
+			}, options);
+			document.addEventListener('pointerdown', (event) => {
+				if (event.target instanceof Node && !this.contains(event.target)) this.close();
+			}, options);
+			document.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape' && this.isOpen) {
+					event.preventDefault();
+					const returnFocus = this.panel.contains(document.activeElement);
+					this.close(true);
+					if (returnFocus) this.trigger.focus({ preventScroll: true });
+				}
+			}, options);
+			window.addEventListener('resize', () => this.place(), options);
+			this.addEventListener('definition-update', () => this.place(), options);
+			document.addEventListener('close-definitions', () => this.close(), options);
+			// Keep the panel attached to its trigger as the reader scrolls.
+			window.addEventListener('scroll', () => this.place(), { ...options, capture: true });
+		}
+		disconnectedCallback() {
+			this.close();
+			this.events?.abort();
+		}
+		private open() {
+			if (this.dismissed) return;
+			if (DefinitionHelp.active !== this) DefinitionHelp.active?.close();
+			DefinitionHelp.active = this;
+			if (!this.isOpen) this.panel.showPopover();
+			this.trigger.setAttribute('aria-expanded', 'true');
+			this.place();
+		}
+		private close(dismissed = false) {
+			clearTimeout(this.closeTimer);
+			if (this.isOpen) this.panel.hidePopover();
+			this.trigger.setAttribute('aria-expanded', 'false');
+			this.pinned = false;
+			this.dismissed = dismissed;
+			if (DefinitionHelp.active === this) DefinitionHelp.active = undefined;
+		}
+		private place() {
+			if (!this.isOpen) return;
+			const anchor = this.trigger.getBoundingClientRect();
+			const edge = parseFloat(getComputedStyle(this.panel).paddingLeft);
+			const width = this.panel.getBoundingClientRect().width;
+			const height = this.panel.getBoundingClientRect().height;
+			const left = Math.max(edge, Math.min(anchor.left, window.innerWidth - width - edge));
+			const below = anchor.bottom;
+			const top = below + height <= window.innerHeight - edge
+				? below : Math.max(edge, anchor.top - height);
+			this.panel.style.left = `${left}px`;
+			this.panel.style.top = `${top}px`;
+		}
+	}
+	function focusReference(target: HTMLElement) {
+		let ancestor = target.parentElement;
+		while (ancestor) {
+			if (ancestor instanceof HTMLDetailsElement) ancestor.open = true;
+			ancestor = ancestor.parentElement;
+		}
+		target.focus({ preventScroll: true });
+		target.scrollIntoView({ block: 'start', behavior: 'instant' });
+	}
+	function restoreReference() {
+		document.dispatchEvent(new Event('close-definitions'));
+		const origin = history.state?.nbaDefinitionFragment === location.hash && history.state?.nbaDefinitionOrigin;
+		const trigger = typeof origin === 'string' ? document.getElementById(origin) : null;
+		if (trigger?.matches('[data-definition-trigger]') && trigger.getClientRects().length) {
+			trigger.focus({ preventScroll: true });
+			trigger.scrollIntoView({ block: 'center', behavior: 'instant' });
+			return;
+		}
+		const target = document.getElementById(location.hash.slice(1));
+		if (target?.matches('[data-reference-target]')) focusReference(target);
+	}
+	window.addEventListener('popstate', restoreReference);
+	window.addEventListener('hashchange', restoreReference);
+	if (!customElements.get('definition-help')) customElements.define('definition-help', DefinitionHelp);
+	restoreReference();
+</script>
+
+<style>
+	definition-help { display: inline; }
+	.definition-trigger {
+		min-height: 44px;
+		padding: var(--space-3xs) 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		font-weight: 600;
+		text-align: start;
+		text-decoration: underline;
+		text-decoration-style: dotted;
+		text-underline-offset: 0.25em;
+		cursor: help;
+	}
+	.definition-trigger.compact { min-width: 44px; text-align: center; }
+	.definition-trigger:focus-visible { outline: var(--rule-thick) solid currentColor; outline-offset: 3px; }
+	.definition-trigger[aria-expanded='true'] { text-decoration-style: solid; }
+	.definition-detail {
+		display: block;
+		min-height: 44px;
+		margin-top: var(--space-s);
+		padding: var(--space-2xs) var(--space-xs);
+		border: var(--rule) solid var(--green);
+		background: var(--green);
+		color: var(--cream);
+		font: inherit;
+		font-weight: 600;
+		text-align: start;
+		cursor: pointer;
+	}
+	.definition-detail:focus-visible { outline: var(--rule-thick) solid var(--accent); outline-offset: 3px; }
+	.definition-panel {
+		position: fixed;
+		inset: auto;
+		box-sizing: border-box;
+		width: min(25rem, calc(100vw - 2 * var(--space-s)));
+		max-height: calc(100dvh - 2 * var(--space-s));
+		overflow-y: auto;
+		margin: 0;
+		padding: var(--space-s);
+		border: var(--rule-thick) solid var(--green);
+		background: var(--cream);
+		color: var(--green);
+		font-family: var(--font-body);
+		font-size: 1rem;
+		font-weight: 400;
+		line-height: 1.5;
+		text-align: start;
+		text-transform: none;
+		letter-spacing: normal;
+	}
+</style>

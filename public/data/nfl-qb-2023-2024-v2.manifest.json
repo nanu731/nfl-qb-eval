@@ -1,0 +1,162 @@
+{
+  "schema_version": 2,
+  "data_version": "2023-2024-broader-profile-v2",
+  "generated_utc": "2026-10-19T20:30:45Z",
+  "payload": {
+    "filename": "nfl-qb-2023-2024-v2.json",
+    "sha256": "56c45de0fefde398d74ca31763e56fd86b60c43dd2c3f3b20be566acb57241e1"
+  },
+  "seasons": [2023, 2024],
+  "cohort_count": 20,
+  "row_count": 40,
+  "study_row_count": 10,
+  "units": {
+    "cpoe_pp": "percentage_points",
+    "completion_pct": "percent",
+    "epa_per_dropback": "expected_points_per_dropback",
+    "epa_lower": "expected_points_per_dropback",
+    "epa_upper": "expected_points_per_dropback",
+    "study_associations": "dimensionless",
+    "eligible_throws": "throws",
+    "eligible_games": "actor_games",
+    "dropbacks": "dropbacks",
+    "dropback_games": "actor_games",
+    "sacks": "sacks",
+    "scramble_runs": "runs",
+    "sack_avoidance_pct": "percent",
+    "combined_opportunities": "combined_opportunities",
+    "combined_games": "actor_games",
+    "nonscramble_runs": "runs",
+    "scramble_games": "actor_games",
+    "nonscramble_games": "actor_games",
+    "scramble_share_pct": "percent",
+    "nonscramble_share_pct": "percent",
+    "scramble_contribution": "expected_points_per_combined_opportunity",
+    "nonscramble_contribution": "expected_points_per_combined_opportunity",
+    "scramble_contribution_lower": "expected_points_per_combined_opportunity",
+    "scramble_contribution_upper": "expected_points_per_combined_opportunity",
+    "nonscramble_contribution_lower": "expected_points_per_combined_opportunity",
+    "nonscramble_contribution_upper": "expected_points_per_combined_opportunity",
+    "scramble_epa_per_run": "expected_points_per_role_run",
+    "nonscramble_epa_per_run": "expected_points_per_role_run"
+  },
+  "domains": {
+    "cpoe_pp": {
+      "min": -3.2765650492842373,
+      "max": 7.5214576176897516,
+      "unit": "percentage_points",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "completion_pct": {
+      "min": 63.235294117647044,
+      "max": 76.470588235294116,
+      "unit": "percent",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "epa_per_dropback": {
+      "min": -0.35805082928308185,
+      "max": 0.52258388066519312,
+      "unit": "expected_points_per_dropback",
+      "status": "available",
+      "includes_marginal_limits": true,
+      "constant_observed": false
+    },
+    "sack_avoidance_pct": {
+      "min": 89.983844911147017,
+      "max": 97.402597402597394,
+      "unit": "percent",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "scramble_share_pct": {
+      "min": 0.53667262969588503,
+      "max": 10.443037974683545,
+      "unit": "percent",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "nonscramble_share_pct": {
+      "min": 0.15313935681470101,
+      "max": 17.077798861480076,
+      "unit": "percent",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "scramble_contribution": {
+      "min": -0.02742400920700434,
+      "max": 0.10729766327305992,
+      "unit": "expected_points_per_combined_opportunity",
+      "status": "available",
+      "includes_marginal_limits": true,
+      "constant_observed": false
+    },
+    "nonscramble_contribution": {
+      "min": -0.077688106298439544,
+      "max": 0.09642347979653218,
+      "unit": "expected_points_per_combined_opportunity",
+      "status": "available",
+      "includes_marginal_limits": true,
+      "constant_observed": false
+    },
+    "scramble_epa_per_run": {
+      "min": -0.50078981908570441,
+      "max": 1.4819565843402718,
+      "unit": "expected_points_per_role_run",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "nonscramble_epa_per_run": {
+      "min": -3.7063110845435099,
+      "max": 0.64213715931302329,
+      "unit": "expected_points_per_role_run",
+      "status": "available",
+      "includes_marginal_limits": false,
+      "constant_observed": false
+    },
+    "recorded_composition_pct": {
+      "min": 0,
+      "max": 100,
+      "unit": "percent",
+      "status": "fixed_reference"
+    },
+    "study_correlation": {
+      "min": -1,
+      "max": 1,
+      "unit": "dimensionless",
+      "status": "fixed_reference"
+    },
+    "study_delta": {
+      "min": -2,
+      "max": 2,
+      "unit": "dimensionless",
+      "status": "fixed_reference"
+    }
+  },
+  "aggregate_input_hashes": {
+    "v1_payload": "66264611b91e2f0666facb71dcb42cd05160d1f9f2f095702ce27c96486365d0",
+    "annual_associations": "d78c2e97829ae77c3ffdbdb7002011bd4bc2809250da4fcc5269af32be99302f",
+    "annual_intervals": "1fab47c8ba471d9568fdd19383a8e8756e6c40fac019a248dbe696feb1c88ff7",
+    "cohort": "2d4322731540a760c83f4bbea231f14581ca3b34bdc8c2376271d11ffe5546ba",
+    "E_keys": "67f05a4386241620f24b4618ebd504931fa7659c5c8c57c4c9f5b2a3f9056808",
+    "baseline_rows": "e01104a873504a636ecb62a68f47df2e958dba158892b6ae6b79038dfc1404dc",
+    "sack_rates": "c5fe5f8bdd73f1d38a5ed5b65ea7dfb4c73027ccb593169b96fd357024f7bde0",
+    "sack_counts": "d07d030d99969720598754e9e23712904f70ead59342ea4f8dc67e9cff924647",
+    "sack_results": "92afb33f9c1b0f3890c23eb2562062c2eb447f8ba07722b763777fd78582b28d",
+    "rush_points": "0b5b8f6c9d13e65cdafaf057fceba6f53d7f46b3a19707a1e11d84ef2b22508e",
+    "rush_intervals": "30eed49d888ba7c2ab079a00bad2c53fe3a4646dd32a3deabe9759541f9bac26",
+    "rush_results": "e07aa3a0ef149fd3c2705e6b63aca4964ae98835be03a1a9c565f3ebb8b3c893",
+    "rush_frozen_hashes": "9cee899a995364d6c13ccb0fce426fdfd2d8fd51a1299939e0c93f3aac868934",
+    "rush_manifest": "44eceec8d0c2b009975487d6fa80761f0fd4cb6b3cb2b4f3c52bb7ec40b15050",
+    "rush_O_keys": "8fde2aa8c2253f5a07292549fa297941c329648bdfb84a4a9dab151e6b48739b",
+    "rush_O_maps": "563457a68f8d251561236601c6aae8c9a0018d4c3765556accd037f8529b935f"
+  },
+  "export_script_sha256": "1018bb472b6f818fcdb8f1f6023e8587f5dfdc0f9bf15a753da4d2108b594403"
+}

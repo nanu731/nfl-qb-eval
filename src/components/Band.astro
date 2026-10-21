@@ -1,0 +1,33 @@
+---
+// One band of a write-up. A project page is a stack of these, and the offset
+// changes between them so the eye zigzags down the page.
+//
+// Offsets come from the spacing scale and exist only above 48rem. Below that
+// every band collapses to the same inset, which is why this layout survives a
+// narrow screen. Nothing here needs to know that; `at-*` handles it.
+//
+// GREEN BUDGET. A project page carries two green bands including the footer,
+// and Project.astro already spends one on the question. So a write-up has
+// exactly one `green` band to give. Spend it on the finding.
+//
+// Figures inside a band cancel that band's offset to return to the gutter, so
+// a `<figure class="figure">` keeps its left edge no matter which offset the
+// surrounding prose takes. That works because `.at-*` sets `--offset` and
+// `.figure` subtracts it.
+interface Props {
+	/** Distance from the page inset. Applies above 48rem only. */
+	offset?: 'edge' | 'step' | 'deep';
+	/** Reversed block, cream type on green. One per write-up, no more. */
+	green?: boolean;
+}
+
+// The union type is the guard: a mistyped offset fails the build rather than
+// silently rendering at zero, which is what a bare `at-${string}` class would do.
+const { offset = 'edge', green = false } = Astro.props;
+---
+
+<div class:list={['band', 'prose-band', { 'band--green': green }]}>
+	<div class:list={['band-inner', `at-${offset}`]}>
+		<slot />
+	</div>
+</div>
