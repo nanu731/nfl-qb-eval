@@ -90,7 +90,6 @@ const nameOf=(r:typeof data.rows[number])=>displayNames[r.player_key]??r.observe
      <button class="chart-expand" type="button" data-expand-chart="profile" aria-haspopup="dialog" aria-controls="nfl-chart-lightbox" disabled>Enlarge chart</button>
      <div class="radar-series-key" data-radar-legend><span><svg viewBox="0 0 44 20" aria-hidden="true"><line x1="0" y1="10" x2="44" y2="10" class="series-a"/><circle cx="22" cy="10" r="4.5" class="mark-a"/></svg><span data-radar-legend-name="a">A · Patrick Mahomes · 2023</span></span><span><svg viewBox="0 0 44 20" aria-hidden="true"><line x1="0" y1="10" x2="44" y2="10" class="series-b"/><path d="M22 4.5 L27.5 10 L22 15.5 L16.5 10 Z" class="mark-b"/></svg><span data-radar-legend-name="b">B · Josh Allen · 2023</span></span></div>
 
-     <p class="radar-direction">Farther out means a lower expert rank number or a higher season-stat percentile.</p>
      <div data-chart-host><svg id="nfl-radar" class="radar-chart" data-radar hidden role="group" aria-labelledby="nfl-radar-title nfl-radar-description"></svg></div>
      <figcaption>Read one attribute at a time; shape size is not an overall rating.</figcaption>
     </figure>
@@ -260,7 +259,6 @@ const nameOf=(r:typeof data.rows[number])=>displayNames[r.player_key]??r.observe
  .radar-prototype > h2{font-size:var(--type-h3);margin:0;}
  .prototype-subtitle{font-family:var(--font-numeric);font-size:var(--type-small);margin-block:var(--space-2xs);}
  .profile-window,.expert-key,.radar-intro,.radar-key,.radar-counts,.radar-limits,.radar-scale{font-size:var(--type-small);line-height:1.5;max-width:75ch;margin-block:var(--space-2xs);}
- .radar-direction{font-size:var(--type-small);line-height:1.5;margin-block:0 var(--space-xs);max-width:65ch;}
  .radar-key{font-weight:600;}
  .profile-window{margin-top:0;}
  [data-complete-example]{margin-block:var(--space-2xs);font-size:var(--type-small);}
