@@ -1,16 +1,24 @@
 # NFL QBs Visualized
 
-How do quarterbacks compare when we isolate them from their team and situation? This exploratory project also aims eventually to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
+## Overview
 
-The descriptive annual exports cover 560 qualifying player-seasons across 2006–2025, excluding 2011 because of unresolved duplicate-event and pass-depth conflicts. Eligibility requires at least 200 model-eligible throws in ten games within each season. The exports contain shared play value per dropback, completions above the supplied model expectation, recorded sack avoidance, and separate completion residuals for short, medium and deep throws. These describe recorded outcomes and retain supporting-context and model limitations.
+How do quarterbacks compare when we isolate them from their team and situation? This exploratory project also aims to evaluate context-aware performance while preserving credit for excellent actual play. Neither goal is an established capability.
 
-Separate validation code audits inputs, compares supplied nflfastR completion percentage over expected (CPOE) with ordinary completion percentage on identical eligible 2023 throws, describes their 2023–2024 annual associations, and examines recorded sack-avoidance associations across fixed game sets and seasons. These analyses concern selected regular-use passers, not a position-certified quarterback cohort or a validated overall score. Conditional game-jackknife intervals are working-model sensitivities; persistent context, serial dependence, survivor selection, and unknown CP model/training vintage remain limitations. One annual transition is not a clean historical forecast or repeated temporal validation.
+The descriptive annual exports cover 560 qualifying player-seasons across 2006–2025. They exclude 2011 because of unresolved duplicate-event and pass-depth conflicts. Eligibility requires at least 200 model-eligible throws in ten games within each season.
 
-## Explore the project
+The exports describe shared play value per dropback, completions above the supplied model expectation, recorded sack avoidance, and separate completion residuals for short, medium and deep throws. These measures describe recorded outcomes, with supporting-context and model limitations.
+
+Separate validation code audits inputs and compares supplied nflfastR completion percentage over expected (CPOE) with ordinary completion percentage on identical eligible 2023 throws. It also describes their 2023–2024 annual associations and examines recorded sack-avoidance associations across fixed game sets and seasons.
+
+These analyses concern selected regular-use passers. They do not establish a position-certified quarterback cohort or a validated overall score. Conditional game-jackknife intervals describe working-model sensitivities. Persistent context, serial dependence, survivor selection, and unknown CP model/training vintage remain limitations. One annual transition does not establish a clean historical forecast or repeated temporal validation.
+
+## Project details
+
+### Explore the project
 
 [Interactive quarterback profiles and season comparisons](https://www.nslanalytics.com/projects/nfl-qbs-re-evaluated/)
 
-This repository contains the R analyses, the published aggregate datasets, and the NFL-specific chart implementation. It preserves the distinction between measured season outcomes and expert assessments; neither establishes seven isolated skills or an overall talent score.
+This repository contains R analyses, published aggregate datasets and the NFL-specific chart implementation. Measured season outcomes and expert assessments remain distinct; neither establishes seven isolated skills or an overall talent score.
 
 | Location | Contents |
 |---|---|
@@ -23,11 +31,15 @@ This repository contains the R analyses, the published aggregate datasets, and t
 
 The chart sources match the released [portfolio implementation at commit `6c6b765`](https://github.com/nanu731/portfolio/tree/6c6b765). The portfolio owns the Astro application configuration, site theme, fonts, routing and deployment. These NFL files integrate with that application; this analysis repository is not a standalone website build. No other project's data or application code is copied here.
 
-### Published data
+#### Published data
 
-The four dataset/manifest pairs are the original fixed-cohort 2023–2024 comparison, annual outcomes, annual passing-depth outcomes, and annual scramble contribution. Together they preserve the website's accepted data, source precision, unavailable values, attribution and checksums. The original study's ten association rows remain separate from its 40 player-season rows. Annual files cover 560 qualifying player-seasons from 2006–2025, excluding 2011; annual Mobility has 559 finite values.
+The four dataset/manifest pairs contain the original fixed-cohort 2023–2024 comparison, annual outcomes, annual passing-depth outcomes and annual scramble contribution. They preserve the website's accepted data, source precision, unavailable values, attribution and checksums.
 
-Raw play-by-play downloads, FTN charting records, private run workspaces and intermediate evidence are not included. The exporters document their exact input requirements and verify retained snapshot hashes; downloading a newer upstream release is not guaranteed to reproduce the same inputs.
+The original study's ten association rows remain separate from its 40 player-season rows. Annual files cover 560 qualifying player-seasons from 2006–2025, excluding 2011; annual Mobility has 559 finite values.
+
+The repository excludes raw play-by-play downloads, FTN charting records, private run workspaces and intermediate evidence. The exporters document exact input requirements and verify retained snapshot hashes. A newer upstream release may contain different inputs.
+
+## Usage
 
 ### Verify the published files
 
@@ -38,7 +50,7 @@ node scripts/verify-nfl-percentiles.mjs
 node scripts/verify-nfl-mobility.mjs
 ```
 
-Full profile and search integration checks additionally need a checkout of the linked portfolio revision with its production build already generated. `NFL_PORTFOLIO_ROOT` identifies that checkout. The checks use this repository's NFL code/data and the portfolio's built pages or NBA search reference:
+Full profile and search integration checks also require a checkout of the linked portfolio revision and its completed production build. `NFL_PORTFOLIO_ROOT` identifies that checkout. The checks use this repository's NFL code/data and the portfolio's built pages or NBA search reference:
 
 ```sh
 NFL_PORTFOLIO_ROOT=/path/to/portfolio node scripts/verify-nfl-profile.mjs
@@ -47,7 +59,7 @@ NFL_PORTFOLIO_ROOT=/path/to/portfolio node scripts/verify-nfl-search.mjs
 
 These are source and data checks. Browser interaction and visual checks are separate.
 
-## Scripts and prerequisites
+### Scripts and prerequisites
 
 - `annual_input_counts.R`: verifies frozen annual eligibility, recorded-dropback roles, source identity and EPA availability before expanded summaries.
 - `annual_display.R`: calculates separate annual outcome and depth-residual exports from the verified opportunities, retaining source hashes, conditional uncertainty and explicit unavailable states.
@@ -59,7 +71,7 @@ These are source and data checks. Browser interaction and visual checks are sepa
 - `sack_repeatability.R`: uses exact 2023/2024 PBP/schedule and opportunity manifests for fixed-cohort recorded sack-avoidance associations; no FTN or pressure denominator.
 - `annual_stability.R`: uses existing exact PBP/schedule snapshots for the paired 2023–2024 annual comparison. Each year is a fixed stratum; leave-game deviations are centered on the full estimate, not the deletion mean. FTN is unnecessary for this script.
 
-The scripts use installed R packages; they do not install dependencies. Tested with R 4.6.0 and:
+The scripts use installed R packages without installing dependencies. The tested environment uses R 4.6.0 and the following packages:
 
 | Package | Tested version | Used by |
 |---|---|---|
@@ -75,7 +87,7 @@ The scripts use installed R packages; they do not install dependencies. Tested w
 
 Run from the repository root. Supply existing writable input workspaces outside version control, either external directories or locations covered by `.gitignore`. Inputs and timestamped outputs remain local. `INPUT_2023` and `INPUT_2024` below are placeholders for those existing directory paths, not literal required folder names.
 
-## Reproduce the annual comparison
+### Reproduce the annual comparison
 
 Obtain these files directly from their official links, preserve original bytes, and save them with the indicated filenames. The annual script requires only the two PBP files and the pinned schedule; it does not require acquisition receipts, FTN, or another audit run.
 
@@ -99,9 +111,9 @@ The pinned schedule already contains both complete regular seasons. The PBP snap
 Rscript annual_stability.R "INPUT_2023" "INPUT_2024"
 ```
 
-The script checks byte sizes/hashes before analysis. It saves the actual common cohort, eligible keys, count-only game mapping, specification/input/script hashes, and a run record before computing annual metrics. The cohort requires at least 200 CP-eligible recorded pass outcomes and ten games in each year, with a 20-passer full-data reporting floor. Candidate and baseline use identical rows. Results, influence checks, and verification examples receive a unique prefix in INPUT_2024; no player-performance leaderboard is produced.
+Before analysis, the script checks byte sizes and hashes. Before computing annual metrics, it saves the actual common cohort, eligible keys, count-only game mapping, specification/input/script hashes and a run record. The cohort requires at least 200 CP-eligible recorded pass outcomes and ten games in each year, with a 20-passer full-data reporting floor. Candidate and baseline use identical rows. Results, influence checks, and verification examples receive a unique prefix in INPUT_2024; no player-performance leaderboard is produced.
 
-## Reproduce the 2023 audit and split pilot
+### Reproduce the 2023 audit and split pilot
 
 For a fresh official-source audit:
 
@@ -127,7 +139,7 @@ The pilot freezes cohort and game assignments before summaries. It requires at l
 
 **Exact reproduction requires matching snapshots.** Release tags are mutable. If an official download no longer matches the required hash, the fixed analysis stops; a matching filename or tag is insufficient. Preserve original downloads, receipts and run records. Changed inputs/specifications constitute a different run, not exact reproduction.
 
-## Recorded-dropback observed-value baseline
+### Recorded-dropback observed-value baseline
 
 `performance_baseline.R` uses the exact PBP snapshots above and the matching annual `cohort_counts.csv` / `frozen_E_keys.csv` manifests to fix the common regular-use cohort by counts. It needs only installed dplyr, readr, arrow and digest. Supply the annual output prefix, including its trailing underscore. Outputs are sorted by actor ID/year: raw shared EPA totals, pooled opportunity means and marginal actor-game sensitivity intervals. Opportunities include recorded played passes, sacks and scrambles without a CP filter; designed rushing and the wider penalty universe are outside scope. This supplies no independent support-quality adjustment or overall score.
 
@@ -135,7 +147,7 @@ The pilot freezes cohort and game assignments before summaries. It requires at l
 Rscript performance_baseline.R "INPUT_2023" "INPUT_2024" "ANNUAL_PREFIX_"
 ```
 
-## Recorded sack-avoidance repeatability
+### Recorded sack-avoidance repeatability
 
 `sack_repeatability.R` describes `100 × (dropbacks − recorded sacks) / dropbacks` for the same fixed 20 regular-use passers. Opportunities are recorded played passes, sacks and scramble-runs, with no CP, EPA-availability, E-game, penalty or description filter. The cohort was selected by at least 200 eligible throws and ten eligible games in **each** year, so survivor and CP-related selection remain. It is not a position-certified quarterback population.
 
@@ -155,11 +167,11 @@ Supply the full paths, including any timestamp prefixes, and an existing writabl
 Rscript sack_repeatability.R "INPUT_2023" "INPUT_2024" "COHORT_CSV" "E_KEYS_CSV" "D_KEYS_CSV" "OUTPUT_DIR" "e60420a5020804a5cafcd3eaf559b20d17ab716c52e9130e32f48c6ae1f070d7"
 ```
 
-The script verifies source hashes and accepted E/D keys, independently reconstructs membership and split maps, and saves counts, keys, maps, contributing games and a design/script-hashed run manifest before rates. Timestamped outputs include actor-half/year counts and rates, all whole-NFL-game deletions, paired-actor influence checks, unavailable statuses, and complement/known-mean arithmetic checks. Zero-sack records remain; missing diagnostic flags remain explicit.
+Before calculating rates, the script verifies source hashes and accepted E/D keys, reconstructs membership and split maps as an independent check, and saves counts, keys, maps, contributing games and a design/script-hashed run manifest. Timestamped outputs include actor-half/year counts and rates, all whole-NFL-game deletions, paired-actor influence checks, unavailable statuses, and complement/known-mean arithmetic checks. Zero-sack records remain; missing diagnostic flags remain explicit.
 
 Approximate 95% conditional working-model sensitivity intervals use Fisher-transformed correlations and delete complete NFL games across both teams, all selected actors and both half labels. Each season's replicates are centered on **their own mean**, then its finite-game variance contribution is summed. This prospectively specified annual centering differs from `annual_stability.R`; earlier CPOE outputs are unchanged. Undefined/boundary correlations or zero/nonfinite variance withhold the affected interval without dropping replicates or changing cohorts. These sensitivities do not establish NFL coverage, absolute agreement, player separation, pressure handling, isolated skill, prediction or overall decision quality; persistent surroundings, serial dependence, selection and rare sacks remain limitations.
 
-## Recorded run contribution
+### Recorded run contribution
 
 `rush_contribution.R` keeps the same fixed 20-ID cohort and distinguishes **S**, recorded scramble-runs within accepted dropbacks D, from **R**, recorded non-scramble actor runs outside D. R includes aborted and lateral plays and must not be called designed rushing. Combined opportunities are the disjoint union **O = D ∪ R**. For each role k, contribution is `sum(role EPA) / N_O`, combining frequency and shared observed value. Its denominator is not the role's run count. With no role opportunities, contribution is zero and per-role mean EPA is unavailable; neither describes zero ability.
 
@@ -176,11 +188,11 @@ Rscript rush_contribution.R "INPUT_2023" "INPUT_2024" "COHORT_CSV" "D_KEYS_CSV" 
 
 Supply existing paths, including timestamp prefixes where present, and an existing writable output directory outside Git. The script needs installed dplyr, readr, arrow and digest only; no ignored design notes at runtime. Missing/changed hashes or target attribution/EPA contradictions stop execution. It freezes source/specification/script hashes, cohort, O keys/counts and new O-game maps before EPA sums or rates.
 
-The two primaries are 2023 odd/even O-game associations for the two contributions; the two secondaries are their full 2023–2024 associations. No other split or correlation contrast is computed. Whole-NFL-game deletions remove both teams, roles and half labels while recomputing numerator and denominator on unchanged membership/maps. Each season's Fisher replicates use their own mean for conditional correlation intervals. Separate marginal actor-season ratio intervals use every actor O game, including zero-role games. Outputs retain shares, role counts/games, per-role means, overlapping aborted/lateral/fumble/penalty diagnostics, undefined statuses and paired-actor influence checks, sorted by ID rather than performance.
+The two primary analyses measure 2023 odd/even O-game associations for the two contributions. The two secondary analyses measure their full 2023–2024 associations. The script computes no other split or correlation contrast. Whole-NFL-game deletions remove both teams, roles and half labels while recomputing numerator and denominator on unchanged membership/maps. Each season's Fisher replicates use their own mean for conditional correlation intervals. Separate marginal actor-season ratio intervals use every actor O game, including zero-role games. Outputs retain shares, role counts/games, per-role means, overlapping aborted/lateral/fumble/penalty diagnostics, undefined statuses and paired-actor influence checks, sorted by ID rather than performance.
 
 These are conditional working-model sensitivities, not demonstrated NFL coverage, rankings, forecasts or isolated mobility. R preserves whole-play and other participants' effects. S already contributes to EPA/D; the O-denominated measures must not be added to that D-denominated mean or presented as independent skill axes. Sparse signed EPA, usage/scheme, persistent support, selection and serial dependence limit interpretation. Website use requires a reviewed export-contract revision; this script does not publish comparison data.
 
-## Export the annual comparison data
+### Export the annual comparison data
 
 `export_comparison.R` creates aggregate comparison JSON for the fixed 20-ID, 40-season-row cohort. It reconstructs CPOE and completion means only from the exact frozen in-cohort E keys joined one-to-one to the original PBP. It does not rerun eligibility, calculate individual CPOE/completion uncertainty or fit anything. Validation-only annual `r_C`, `r_B` and their difference must reproduce the accepted outputs within `1e-10`; disagreement stops export. EPA means, marginal conditional interval limits/statuses and dropback counts are copied from the existing baseline rows.
 
@@ -196,7 +208,7 @@ Outputs are `nfl-qb-2023-2024-v1.json` and `nfl-qb-2023-2024-v1.manifest.json`. 
 
 Rows use published GSIS IDs and observed abbreviated names, with source precision and native units. EPA performance remains separate from matched-row CPOE/completion; their denominators differ. Null interval limits indicate unavailability, never zero. No individual CPOE/completion intervals, FTN numbers, sack-study fields, percentiles, ranks, ratings or context-adjusted score are exported. Study-level intervals stay separate from player rows. Explicit public metadata preserves source attribution, transformation notices and analysis hashes; local paths, raw plays and run records remain private. PBP data attribution under CC BY 4.0 is separate from original-code MIT licensing. The conditional intervals do not establish NFL coverage, isolated skill, forecast validity or useful player separation.
 
-## Export the broader descriptive profile
+### Export the broader descriptive profile
 
 `export_profile.R` packages accepted aggregates into schema v2 without rerunning eligibility, correlations or uncertainty calculations. It preserves every v1 player field and all three annual study rows, then adds recorded sack avoidance, separate scramble/non-scramble contributions and their existing marginal intervals. All three sack and four run study rows remain separate from the 40 player-season records.
 
@@ -214,9 +226,9 @@ Run contributions use `sum(role EPA)/N_O`, combining frequency and shared value.
 
 Intervals remain conditional sensitivities, not tests of player differences or season changes. Annual CPOE retains its full-estimate-centered variance; sack/run studies retain their own-replicate-mean centering. The evidence does not establish independent traits, isolated mobility, forecasts, rankings, metric superiority or a context-adjusted overall score. Export preparation alone does not certify a consuming website or authorize publication.
 
-## Independent annual and depth exports
+### Independent annual and depth exports
 
-The annual display uses each season's qualifying recorded passers independently; it does not require a player to qualify in adjacent years. The older paired studies and their 20-player 2023–2024 cohort remain separate. All 560 annual records and their original 40-record overlap were independently reconciled before consumer use.
+The annual display selects qualifying recorded passers within each season, without requiring qualification in adjacent years. The older paired studies and their 20-player 2023–2024 cohort remain separate. All 560 annual records and their original 40-record overlap were independently reconciled before consumer use.
 
 `annual_display.R` consumes preserved, hash-pinned count-audit manifests, the official GSIS-keyed display-name snapshot, immutable v2 assets for reconciliation, and depth-count evidence. It does not download replacement data or read internal planning documents. Supply an existing empty output directory; inputs and private ledgers stay outside version control.
 
@@ -232,7 +244,7 @@ EPA intervals delete complete recorded-dropback games. Depth intervals delete ev
 
 Native display bounds are frozen over the complete accepted reference data, including available endpoints and zero for signed measures. The three displayed depth bins share one percentage-point domain. Any radial transformation is display geometry; equal distances across different statistics do not represent equal ability. These exports contain no percentile, arm-strength rating, processing score, overall winner or context-neutral talent estimate.
 
-## Annual recorded scramble contribution
+### Annual recorded scramble contribution
 
 `export_annual_mobility.R` extends the recorded scramble-contribution display to the same 560 qualifying player-seasons. It reconstructs disjoint recorded dropbacks **D** and recorded non-scramble actor runs **R**, then uses their union **O = D ∪ R**. The displayed contribution is `sum(scramble EPA) / number of O plays`. It combines scramble frequency with shared play value; it does not measure isolated mobility, running speed or designed-rushing skill.
 
@@ -244,11 +256,11 @@ Supply existing directories. `PBP_DIR` contains the 19 preserved `play_by_play_<
 
 Outputs are `nfl-qb-mobility-2006-2025-v1.json` and its digest manifest, plus private verification, source-provenance, game-deletion and original-study reconciliation files. Keep the latter files outside version control. The original six assets and the 40-record paired study remain unchanged. Reproduction requires their exact retained snapshots; changing a filename or retrieving a newer release is insufficient.
 
-There are 559 finite contributions. Kyle Boller’s 2007 record retains its counts but withholds its point and range because one non-scramble opportunity has a recorded-role contradiction. 2011 remains excluded. Four seasons with no recorded scrambles retain genuine zero contributions and collapsed conditional ranges; missing evidence is never assigned zero. Historical team-code aliases are normalized solely for schedule comparisons, without altering raw sources or opportunity membership.
+The export contains 559 finite contributions. Kyle Boller’s 2007 record retains its counts, but one non-scramble opportunity has a recorded-role contradiction, so the point and range remain unavailable. 2011 remains excluded. Four seasons with no recorded scrambles retain genuine zero contributions and collapsed conditional ranges; missing evidence is never assigned zero. Historical team-code aliases are normalized solely for schedule comparisons, without altering raw sources or opportunity membership.
 
 Conditional game-jackknife ranges delete every O game, including games with no scrambles and eight games containing only R opportunities. They describe sensitivity to the observed game sample, not demonstrated coverage, player differences or forecasts. Any consumer percentile must use finite values from the selected season’s frozen peer group, with its actual N displayed; it must not reuse the earlier paired cohort. Supporting players, scheme, opportunity selection, unknown upstream EP model vintage and whole-play attribution remain limitations.
 
-## Optional evidence-summary figure
+### Optional evidence-summary figure
 
 `plot_repeatability.R` reads existing interleaved/chronological pilot and annual interval CSVs plus their cohort-count CSVs; it performs no estimation. Supply the two full output prefixes, including their trailing underscores, and an unused PNG path in an existing local output directory. The figure distinguishes the two correlations from their paired difference and labels the different cohorts; it is an evidence summary rather than a player skill chart.
 
@@ -256,9 +268,11 @@ Conditional game-jackknife ranges delete every O game, including games with no s
 Rscript plot_repeatability.R "PILOT_PREFIX_" "ANNUAL_PREFIX_" "NEW_OUTPUT.png"
 ```
 
-## Code and data terms
+## License
 
-Original project code is [MIT licensed](LICENSE). Third-party data have separate terms:
+### Code and data terms
+
+The [MIT license](LICENSE) covers original project code. Third-party data retain separate terms:
 
 - PBP is distributed through nflverse under the [nflverse-data CC BY 4.0 license](https://github.com/nflverse/nflverse-data/blob/master/LICENSE.md). Retain applicable attribution and source notices.
 - The released FTN subset is documented as CC BY-SA 4.0 with attribution **FTN Data via nflverse**; see the [official FTN loader documentation](https://nflreadr.nflverse.com/reference/load_ftn_charting.html). This does not grant rights to unreleased FTN products.
