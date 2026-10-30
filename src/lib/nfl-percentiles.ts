@@ -21,14 +21,14 @@ const cohortFor = (metric: string): PercentileCohort => metric === 'scramble_con
 /** Midpoint empirical standing, including the focal record among its finite peers. */
 export function midpointPercentile(value: number | null, peers: readonly (number | null)[]): number | null {
   if (!finite(value)) return null;
-  const values = peers.filter(finite);
-  if (values.length < 2 || !values.some(peer => peer === value)) return null;
-  let below = 0, tied = 0;
-  for (const peer of values) {
+  let below = 0, tied = 0, count = 0;
+  for (const peer of peers) {
+    if (!finite(peer)) continue;
+    count += 1;
     if (peer < value) below += 1;
     else if (peer === value) tied += 1;
   }
-  return 100 * (below + 0.5 * tied) / values.length;
+  return count < 2 || tied === 0 ? null : 100 * (below + 0.5 * tied) / count;
 }
 
 /** Display rounding never changes the full-precision radius or stretches endpoints. */

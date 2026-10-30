@@ -42,6 +42,8 @@ const unitCases = [
   [9, [9, 9, 9], 50], [9, [9], null], [null, [1, 2], null],
   [NaN, [1, 2], null], [Infinity, [1, 2], null], [1, [1, null, NaN, Infinity, 2], 25],
   [1, [1, null], null], [3, [1, 2], null], [0, [-0, 0], 50],
+  [1, [], null], [1, [null, NaN, Infinity, -Infinity], null],
+  [-2, [-Infinity, -2, -2, null, 0, Infinity], 100 / 3],
   [1, [1, 1 + Number.EPSILON], 25], [1 + Number.EPSILON, [1, 1 + Number.EPSILON], 75],
 ];
 for (const [value, peers, expected] of unitCases) assert.equal(midpoint(value, peers), expected);
