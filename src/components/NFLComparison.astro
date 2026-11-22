@@ -34,6 +34,7 @@ const displayNames:Record<string,string> = {"00-0026498": "Matthew Stafford", "0
 const nameOf=(r:typeof data.rows[number])=>displayNames[r.player_key]??r.observed_name;
 
 ---
+<link rel="stylesheet" href="/nfl-football-swap.css" />
 <nfl-comparison data-state="loading">
  <section aria-label="Compare two quarterbacks">
   <div class="project-views" role="tablist" aria-label="Explore quarterback data" data-project-views hidden>
@@ -59,6 +60,7 @@ const nameOf=(r:typeof data.rows[number])=>displayNames[r.player_key]??r.observe
     </div>
     <p class="search-status visually-hidden" id="nfl-search-status-a" data-search-status-a role="status" aria-live="polite"></p>
    </div>
+   <button type="button" class="nfl-swap" data-swap-players disabled><span class="nfl-swap-ball" data-swap-ball aria-hidden="true"></span><span>Swap players</span></button>
    <div class="comparison-side" role="group" aria-label="Quarterback B and season">
     <div class="player-season">
      <div class="player-combobox">

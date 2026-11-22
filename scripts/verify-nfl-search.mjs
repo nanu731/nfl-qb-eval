@@ -51,3 +51,27 @@ for(const [year,view]of [['2023','stats'],['','stats'],['2023','profile']]){
 assert.match(menuFeedback.stats2023.textContent,/2023/);assert.match(menuFeedback.stats2023.textContent,/Choose season/);assert.match(menuFeedback.stats2023.textContent,/across years/);
 assert.match(menuFeedback.stats.textContent,/across eligible seasons/);assert.match(menuFeedback.stats.textContent,/another name/);assert.equal(menuFeedback.stats2023.attrs['aria-disabled'],'true');
 console.log(JSON.stringify({sourceChecks:'passed',nbaFilterComparisons:comparisons,noResultsFeedbackCases:3,seasons:annual.season_catalog.length,additional:'close preserves text, selection retains name, season scoping, focus/outside-pointer wiring and UI contract',browserChecks:'not performed by this script'}));
+
+{
+// A swap moves complete player-season selections; motion never gates the state change.
+let reduced=false,animations=0,cancellations=0,renders=0;
+const swap=method('swapPlayers','loadExample',{matchMedia:()=>({matches:reduced})});
+const swapControls={a:{value:'mahomes'},b:{value:'allen'},'season-a':{value:'2023'},'season-b':{value:'2024'}};
+const swapHost={dataset:{state:'ready'},selectionNotice:{a:'first notice',b:'second notice'},requiredMask:127,
+ control:key=>swapControls[key],updateSeasons(side,year){swapControls['season-'+side].value=year;},refreshSearchSeason(){},render(){renders++;},
+ querySelector:()=>({getAnimations:()=>[{cancel(){cancellations++;}}],animate(){animations++;}})};
+swap.call(swapHost);
+assert.deepEqual(Object.values(swapControls).map(c=>c.value),['allen','mahomes','2024','2023']);
+assert.deepEqual(swapHost.selectionNotice,{a:'second notice',b:'first notice'});assert.equal(swapHost.requiredMask,127);assert.equal(renders,1);assert.equal(animations,1);
+reduced=true;swap.call(swapHost);
+assert.deepEqual(Object.values(swapControls).map(c=>c.value),['mahomes','allen','2023','2024']);assert.equal(animations,1);assert.equal(cancellations,2);
+for(const [ids,years] of [[['same','same'],['2023','2024']],[['','allen'],['','2024']],[['mahomes','allen'],['2011','2024']]]){
+ [swapControls.a.value,swapControls.b.value]=ids;[swapControls['season-a'].value,swapControls['season-b'].value]=years;
+ swap.call(swapHost);assert.deepEqual(Object.values(swapControls).map(c=>c.value),[ids[1],ids[0],years[1],years[0]]);
+}
+const before=JSON.stringify(swapControls),rendered=renders;swapHost.dataset.state='error';swap.call(swapHost);assert.equal(JSON.stringify(swapControls),before);assert.equal(renders,rendered);
+const effect=await import('./nfl-football.fx.mjs');const sheet=readFileSync('public/nfl-football-swap.png');
+assert.equal(sheet.readUInt32BE(16),effect.meta.size[0]*(Math.round(effect.meta.duration*effect.meta.fps)+1));assert.equal(sheet.readUInt32BE(20),effect.meta.size[1]);
+console.log(JSON.stringify({swapPairCases:5,reducedMotion:'passed',unreadyGuard:'passed',spriteDimensions:'passed',browserChecks:'separate'}));
+
+}

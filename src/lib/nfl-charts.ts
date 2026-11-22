@@ -108,6 +108,17 @@ export function registerNFL(){
    if(this.view!==view)this.setView(view);
    if(!(history.state?.nflAttributeFragment===location.hash&&history.state?.nflAttributeOrigin))this.querySelector<HTMLButtonElement>(`[data-project-view="${view}"]`)!.focus({preventScroll:true});
   };
+  swapPlayers(){
+   if(this.dataset.state!=='ready')return;
+   const pair=['a','b'].map(side=>({id:this.control(side).value,year:this.control(`season-${side}`).value,notice:this.selectionNotice[side]}));
+   for(const [i,side] of ['a','b'].entries()){
+    const other=pair[1-i];this.control(side).value=other.id;this.selectionNotice[side]=other.notice;this.updateSeasons(side,other.year);this.refreshSearchSeason(side);
+   }
+   this.render();
+   const ball=this.querySelector<HTMLElement>('[data-swap-ball]')!;
+   ball.getAnimations().forEach(animation=>animation.cancel());
+   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)ball.animate([{backgroundPosition:'0% 0%'},{backgroundPosition:'100% 0%'}],{duration:700,easing:'steps(21)'});
+  }
   loadExample(){
    for(const [side,id]of [['a','00-0033873'],['b','00-0034857']]){this.control(side).value=id;this.updateSeasons(side,'2023');this.selectionNotice[side]='';this.refreshSearchSeason(side);}
    this.render();
@@ -275,6 +286,7 @@ export function registerNFL(){
    for(const side of ['a','b'])this.control(`season-${side}`).addEventListener('change',()=>{this.selectionNotice[side]='';this.reconcileSelection(side);this.render();});
    this.querySelector('[data-retry]')!.addEventListener('click',()=>this.load());
    this.querySelector('[data-complete-example]')!.addEventListener('click',()=>this.loadExample());
+   this.querySelector('[data-swap-players]')!.addEventListener('click',()=>this.swapPlayers());
    this.querySelectorAll('[data-require-attribute]').forEach(box=>box.addEventListener('change',()=>this.changeRequirements()));
    this.querySelector('[data-clear-requirements]')!.addEventListener('click',()=>this.changeRequirements(true));
    this.querySelectorAll('[data-sack-section],[data-comparison-evidence]').forEach(e=>e.addEventListener('toggle',()=>{if(this.annual)this.render(false);}));
@@ -292,7 +304,7 @@ export function registerNFL(){
    const methodNote=this.querySelector<HTMLElement>('[data-expert-method-note]')!;methodNote.textContent='';methodNote.hidden=true;
    this.querySelector('[data-radar-a]')!.textContent='Quarterback A';this.querySelector('[data-radar-b]')!.textContent='Quarterback B';
    for(const side of ['a','b'])this.closeSuggestions(side);
-   this.querySelectorAll<HTMLSelectElement|HTMLInputElement|HTMLButtonElement>('select,input[type=search],[data-complete-example],[data-require-attribute],[data-clear-requirements],[data-stat-metric],[data-expand-chart]').forEach(e=>e.disabled=true);
+   this.querySelectorAll<HTMLSelectElement|HTMLInputElement|HTMLButtonElement>('select,input[type=search],[data-complete-example],[data-require-attribute],[data-clear-requirements],[data-stat-metric],[data-expand-chart],[data-swap-players]').forEach(e=>e.disabled=true);
   }
   async load(){
    const restore=this.querySelector('[data-retry]')===document.activeElement,token=++this.request;
@@ -302,7 +314,7 @@ export function registerNFL(){
     if(responses.some(r=>!r.ok))throw Error('Data unavailable');const bytes=await Promise.all(responses.map(async r=>new Uint8Array(await r.arrayBuffer())));
     const [{annual,depth},legacy]=await Promise.all([validateAnnualDepth(bytes[0],bytes[1],bytes[2],bytes[3]),validatePair(bytes[4],bytes[5])]);const mobility=await validateAnnualMobility(bytes[6],bytes[7],annual,legacy);validateExpertRanks(EXPERT_RANKS);const [references,mobilityReferences]=await Promise.all([buildPercentileReferences(annual,depth,legacy),buildMobilityReferences(mobility)]);await document.fonts.ready;
     if(token!==this.request||!this.isConnected)return;this.annual=annual;this.depth=depth;this.legacy=legacy;this.mobility=mobility;this.references=references;this.mobilityReferences=mobilityReferences;this.dataset.state='ready';
-    this.querySelectorAll<HTMLSelectElement|HTMLInputElement|HTMLButtonElement>('select,input[type=search],[data-complete-example],[data-require-attribute],[data-clear-requirements],[data-stat-metric],[data-expand-chart]').forEach(e=>e.disabled=false);for(const side of ['a','b'])this.reconcileSelection(side);this.render();if(restore)this.search('a').focus();
+    this.querySelectorAll<HTMLSelectElement|HTMLInputElement|HTMLButtonElement>('select,input[type=search],[data-complete-example],[data-require-attribute],[data-clear-requirements],[data-stat-metric],[data-expand-chart],[data-swap-players]').forEach(e=>e.disabled=false);for(const side of ['a','b'])this.reconcileSelection(side);this.render();if(restore)this.search('a').focus();
    }catch{if(token!==this.request)return;this.clear();this.dataset.state='error';this.querySelector('[data-comparison-status]')!.textContent='The comparison data could not be verified. Retry, or open Data and research details below for tables and downloads.';this.querySelector<HTMLButtonElement>('[data-retry]')!.hidden=false;}
   }
   render(announce=true){

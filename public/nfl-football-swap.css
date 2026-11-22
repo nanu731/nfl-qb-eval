@@ -1,0 +1,7 @@
+ .nfl-swap{display:flex;align-items:center;justify-content:center;justify-self:center;align-self:center;gap:var(--space-3xs);min-height:44px;padding:var(--space-3xs) var(--space-xs);font:inherit;font-size:var(--type-small);line-height:1.2;color:var(--green);background:var(--cream);border:var(--rule) solid var(--green);cursor:pointer;white-space:nowrap;}
+ .nfl-swap:hover{background:var(--sand);}
+ .nfl-swap:focus-visible{outline:var(--rule-thick) solid var(--accent);outline-offset:3px;}
+ .nfl-swap:disabled{opacity:.6;cursor:wait;}
+ .nfl-swap-ball{display:block;flex:none;width:80px;height:32px;background-image:url('/nfl-football-swap.png');background-size:2200% 100%;background-position:0 0;image-rendering:pixelated;}
+
+@media(min-width:48rem){nfl-comparison .fan-controls:has(> .nfl-swap){grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;}}

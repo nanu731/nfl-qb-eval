@@ -49,6 +49,8 @@ Raw play-by-play, FTN charting records and intermediate analysis files are not
 included. Reproducing a study requires its exact source snapshots; a newer download
 with the same filename may contain different data.
 
+The comparison includes a keyboard-accessible **Swap players** control that exchanges both selected player-season pairs. Its brief pixel-football animation respects reduced-motion preferences. The sprite is rendered with [pixelfx](https://github.com/patch-gg/pixelfx) (MIT); the original effect definition is in `scripts/nfl-football.fx.mjs`. Only a small pre-rendered PNG is used by the website, with no added runtime package.
+
 ## Getting started
 
 ### Check the published files
